@@ -1,1 +1,1 @@
-n8n 자동화 프로젝트입니다.
+n8n & LangGraph Automation
