@@ -1,0 +1,12 @@
+python-telegram-bot==20.7
+beautifulsoup4==4.12.3
+requests==2.31.0
+langchain==0.1.12
+langgraph==0.0.27
+google-generativeai==0.3.2
+psycopg2-binary==2.9.9
+faiss-cpu==1.7.4
+chromadb==0.4.24
+python-dotenv==1.0.1
+apscheduler==3.10.4
+pydantic==2.6.3 
