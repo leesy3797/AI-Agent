@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+src/vectorstore/
+*.pkl
+*.faiss
+faiss_index/
+bm25_all.pkl
+faiss_all.pkl
+
+# Logs
+*.log 
