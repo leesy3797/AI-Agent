@@ -19,6 +19,7 @@ venv.bak/
 *.swo
 
 # Project specific
+ainews/
 src/vectorstore/
 *.pkl
 *.faiss

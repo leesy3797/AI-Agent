@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 import pickle
 from pathlib import Path
@@ -9,7 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
-    Application,
+    ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
     ContextTypes,
@@ -22,11 +22,12 @@ import google.generativeai as genai
 from langchain_community.vectorstores import FAISS
 from langchain_community.retrievers import BM25Retriever
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_core.documents import Document
 
 from src.crawler.aitimes import AITimesCrawler, NewsArticle
 from src.database.connection import get_db
-from src.database.crud import get_user_by_telegram_id, mark_article_as_read, get_unread_articles, get_article_by_id, create_user_read, get_article_by_url
-from src.agents import AdaptiveRAGAgent, build_ensemble_retriever
+from src.database.crud import get_user_by_telegram_id, mark_article_as_read, get_unread_articles, get_article_by_id, create_user_read, get_article_by_url, create_article
+from src.agents.adaptive_rag_agent import AdaptiveRAGAgent
 
 # 환경 변수 로드
 load_dotenv()
@@ -120,22 +121,23 @@ def load_vectorstore():
         ensemble = build_ensemble_retriever(faiss_all, bm25_all)
         return ensemble
 
-ensemble = load_vectorstore()
-agent = AdaptiveRAGAgent(ensemble, web_search)
+# embedding_model은 한 번만 생성해서 재사용
+rag_agent = AdaptiveRAGAgent()
 
+# 자동 크롤링 (스케줄러에서 호출)
 async def crawl_new_articles():
     """새로운 기사를 크롤링하고 DB에 저장합니다."""
     try:
         logger.info("새로운 기사 크롤링 시작")
-        articles = crawler.get_latest_news(max_articles=50)
-        logger.info(f"크롤링된 기사 수: {len(articles)}")
+        new_articles = crawler.crawl_and_save_latest_news(max_articles=50)
+        logger.info(f"자동 크롤링: {len(new_articles)}개 새 기사 저장")
     except Exception as e:
         logger.error(f"크롤링 중 오류 발생: {e}")
 
 async def get_user_news(user_id: str) -> List[NewsArticle]:
     """사용자에게 보여줄 뉴스 목록을 가져옵니다."""
     # DB에서 12시간 이내의 기사 가져오기
-    articles = crawler.get_latest_news(max_articles=50)
+    articles = crawler.get_latest_news(max_articles=10)
     logger.info(f"DB에서 가져온 총 기사 수: {len(articles)}")
     
     # DB에서 사용자가 읽지 않은 기사만 필터링
@@ -198,10 +200,26 @@ def create_news_keyboard(articles: List[NewsArticle], page: int = 0) -> InlineKe
     
     return InlineKeyboardMarkup(keyboard)
 
-async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE, page: int = 0) -> None:
-    """최신 뉴스 목록을 보여줍니다."""
+# DB에서 가장 최근 기사 시간 가져오기
+async def get_latest_article_time():
+    from src.database.models import Article
+    with get_db() as db:
+        latest = db.query(Article).order_by(Article.published_at.desc()).first()
+        if latest:
+            return latest.published_at
+        else:
+            return None
+
+# /news 명령어: 최신 기사 크롤링 후 뉴스 목록 보여주기
+async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE, page: int = 0, do_crawl: bool = True) -> None:
+    context.user_data['chat_article_id'] = None  # 기사 대화 세션 초기화
     try:
         user_id = str(update.effective_user.id)
+        if do_crawl:
+            # 최초 /news 명령어에서만 크롤링
+            new_articles = crawler.crawl_and_save_latest_news(max_articles=50)
+            logger.info(f"실시간 크롤링: {len(new_articles)}개 새 기사 저장")
+        # DB에서 기사 목록만 페이징
         articles = await get_user_news(user_id)
         if not articles:
             if update.message:
@@ -337,13 +355,14 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                     await query.message.reply_text("죄송합니다. 기사를 가져오는 중 오류가 발생했습니다.")
         
         elif query.data.startswith("page_"):
-            # 페이지네이션 처리
+            # 페이지네이션 처리 (크롤링 없이)
             page = int(query.data.split("_")[1])
-            await news_command(update, context, page)
+            await news_command(update, context, page, do_crawl=False)
         
         elif query.data.startswith("chat_"):
             # 채팅 시작 처리
             article_url = query.data[5:]  # "chat_" 제거
+            context.user_data['chat_article_id'] = article_url  # 항상 최신 기사로 덮어쓰기
             await start_chat(update, context, article_url)
         
         elif query.data == "back_to_list":
@@ -368,23 +387,31 @@ async def start_chat(update: Update, context: ContextTypes.DEFAULT_TYPE, article
     article_id = article_url  # URL을 ID로 사용
     await update.callback_query.message.reply_text("이 기사에 대해 궁금한 점을 입력해 주세요!")
     # 다음 메시지를 챗봇 세션으로 연결
-    context.user_data['chat_article_id'] = article_id
+    context.user_data['chat_article_id'] = article_id  # article.url로 저장
 
 async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = str(update.effective_user.id)
-    article_id = context.user_data.get('chat_article_id')
-    user_question = update.message.text
-    answer = agent.chat_with_agent(user_id, article_id, user_question)
-    await update.message.reply_text(answer)
+    try:
+        user_question = update.message.text
+        articles = await get_user_news(str(update.effective_user.id))
+        documents = [
+            Document(page_content=article.content, metadata={"article_id": article.url, "title": getattr(article, "title", None)})
+            for article in articles
+        ]
+        article_id = context.user_data.get('chat_article_id')
+        answer = rag_agent.answer(user_question, documents, article_id=article_id)
+        await update.message.reply_text(answer)
+    except Exception as e:
+        logger.error(f"handle_user_message error: {e}", exc_info=True)
+        # 중복 에러 메시지 전송 방지: 사용자에게는 에러 메시지 전송하지 않음
 
 def main():
     # 봇 시작
-    application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+    application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     
     # 명령어 핸들러 등록
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("news", news_command))
+    application.add_handler(CommandHandler("news", lambda update, context: news_command(update, context, page=0, do_crawl=True)))
     application.add_handler(CallbackQueryHandler(button_callback, pattern="^news_|^page_|^chat_|^article_|^back_to_list$"))
     
     # 에러 핸들러 등록
@@ -399,7 +426,7 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_user_message))
 
     logger.info("텔레그램 봇이 시작되었습니다. (Ctrl+C로 종료)")
-    application.run_polling()
+    application.run_polling(timeout=60)
 
 if __name__ == "__main__":
     try:

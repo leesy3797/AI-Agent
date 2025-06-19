@@ -34,13 +34,14 @@ class AITimesCrawler:
     
     def _get_soup(self, url: str) -> BeautifulSoup:
         """URL에서 BeautifulSoup 객체를 가져옵니다."""
-        try:
-            response = self.session.get(url)
-            response.raise_for_status()
-            return BeautifulSoup(response.text, 'html.parser')
-        except requests.RequestException as e:
-            logger.error(f"Error fetching {url}: {e}")
-            raise
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Referer": self.BASE_URL,
+            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+        }
+        resp = requests.get(url, headers=headers, timeout=10)
+        resp.raise_for_status()
+        return BeautifulSoup(resp.text, "html.parser")
     
     def _parse_date(self, date_str: str) -> datetime:
         """날짜 문자열을 datetime 객체로 변환합니다."""
@@ -53,28 +54,27 @@ class AITimesCrawler:
     
     def _extract_article_content(self, article_url: str) -> str:
         """기사 본문을 추출합니다."""
+        logger = logging.getLogger("aitimes_crawler")
         soup = self._get_soup(article_url)
         
-        # 기사 본문이 있는 여러 가능한 선택자 시도
         content_selectors = [
+            "article#article-view-content-div",
             "div#article-view-content-div",
             "div.article-view-content",
             "div.article-body",
             "div#articleBodyContents"
         ]
-        
         for selector in content_selectors:
             article_body = soup.select_one(selector)
             if article_body:
-                # 불필요한 요소 제거
-                for element in article_body.select("script, style, .article-photo, .article-photo-caption"):
+                for element in article_body.select("script, style, .article-photo, .ad, figure, figcaption, button"):
                     element.decompose()
-                
-                content = article_body.get_text(strip=True)
+                content = article_body.get_text(separator="\n", strip=True)
                 if content:
                     return content
-        
-        logger.warning(f"Could not find article content at {article_url}")
+        # 본문 셀렉터 실패 시 HTML 앞부분 로그
+        logger.warning(f"[크롤러] 본문 셀렉터 실패: {article_url}")
+        logger.debug(soup.prettify()[:1000])
         return ""
     
     def _save_article_to_db(self, article: NewsArticle) -> bool:
@@ -156,22 +156,23 @@ class AITimesCrawler:
             if not soup:
                 return None
                 
-            article_div = soup.select_one('div#article-view-content-div')
-            if not article_div:
-                logger.warning(f"Could not find article content at {url}")
-                return None
+            # # 본문 div 추출
+            # article_div = soup.select_one('article#article-view-content-div')
+            # if not article_div:
+            #     logger.warning(f"[Article Div] Could not find article content at {url}")
+            #     return None
                 
             # 제목 추출
-            title = soup.select_one('h3#article-title')
+            title = soup.select_one('#articleViewCon > article > header > h3')
             if not title:
-                logger.warning(f"Could not find article title at {url}")
+                logger.warning(f"[Title] Could not find article title at {url}")
                 return None
             title = title.get_text(strip=True)
             
             # 날짜 추출
-            date_str = soup.select_one('div.article-info span.date')
+            date_str = soup.select_one('#articleViewCon > article > header > div.info-group > article:nth-child(1) > ul > li:nth-child(2) > i')
             if not date_str:
-                logger.warning(f"Could not find article date at {url}")
+                logger.warning(f"[Date] Could not find article date at {url}")
                 return None
             date_str = date_str.get_text(strip=True)
             published_at = self._parse_date(date_str)
@@ -179,7 +180,7 @@ class AITimesCrawler:
             # 본문 추출
             content = self._extract_article_content(url)
             if not content:
-                logger.warning(f"Could not extract article content at {url}")
+                logger.warning(f"[Content] Could not extract article content at {url}")
                 return None
             
             article = NewsArticle(
@@ -199,13 +200,66 @@ class AITimesCrawler:
             logger.error(f"Error fetching article {url}: {str(e)}")
             return None
 
+    def get_news_since(self, latest_time: datetime, max_articles: int = 50):
+        """
+        latest_time 이후에 발행된 기사만 크롤링해서 반환
+        (실제 구현은 사이트 구조에 따라 다를 수 있음)
+        """
+        all_articles = self.get_latest_news(max_articles=max_articles)
+        # published_at이 latest_time보다 큰 기사만 반환
+        new_articles = [article for article in all_articles if hasattr(article, 'published_at') and article.published_at > latest_time]
+        return new_articles
+
+    def crawl_and_save_latest_news(self, max_articles: int = 50) -> List[NewsArticle]:
+        """
+        웹에서 최신 기사 목록을 실시간으로 크롤링해서 DB에 없는 기사만 저장하고,
+        새로 저장된 기사 목록을 반환한다.
+        """
+        logger = logging.getLogger("aitimes_crawler")
+        saved_articles = []
+        try:
+            soup = self._get_soup(self.NEWS_LIST_URL)
+            article_links = soup.select('h4.titles > a')
+            logger.info(f"[크롤러] 기사 링크 개수: {len(article_links)}")
+            for link in article_links[:max_articles]:
+                article_url = urljoin(self.BASE_URL, link.get('href'))
+                logger.info(f"[크롤러] 기사 링크: {article_url}")
+                # DB에 이미 있는지 확인
+                with get_db() as db:
+                    if get_article_by_url(db, article_url):
+                        logger.info(f"[크롤러] 이미 DB에 있음: {article_url}")
+                        continue
+                # 상세 크롤링
+                article = self.get_article_by_url(article_url)
+                if article:
+                    logger.info(f"[크롤러] 크롤링 성공: {article.title} / {article.published_at}")
+                    if article.content:
+                        logger.info(f"[크롤러] 본문 길이: {len(article.content)} 글자")
+                    else:
+                        logger.warning(f"[크롤러] 본문이 비어 있음: {article_url}")
+                    saved_articles.append(article)
+                else:
+                    logger.warning(f"[크롤러] 크롤링 실패: {article_url}")
+        except Exception as e:
+            logger.error(f"[크롤러] 예외 발생: {e}")
+        return saved_articles
+
 if __name__ == "__main__":
     # 테스트 코드
     logging.basicConfig(level=logging.INFO)
     crawler = AITimesCrawler()
     
-    # 최신 뉴스 가져오기
-    articles = crawler.get_latest_news(max_articles=5)
+    # DB에서 가장 최신 기사 published_at 가져오기
+    from datetime import datetime
+    from src.database.connection import get_db
+    from src.database.models import Article
+    with get_db() as db:
+        latest_article = db.query(Article).order_by(Article.published_at.desc()).first()
+        if latest_article:
+            latest_time = latest_article.published_at
+        else:
+            latest_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    articles = crawler.get_news_since(latest_time, max_articles=5)
     for article in articles:
         print(f"\n제목: {article.title}")
         print(f"URL: {article.url}")

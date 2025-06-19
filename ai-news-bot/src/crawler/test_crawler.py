@@ -2,9 +2,9 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
-from .aitimes import AITimesCrawler
-from database.crud import get_article_by_url
-from database.database import get_db
+from src.crawler.aitimes import AITimesCrawler
+from src.database.crud import get_article_by_url
+from src.database.connection import get_db
 
 # 로깅 설정
 logging.basicConfig(
