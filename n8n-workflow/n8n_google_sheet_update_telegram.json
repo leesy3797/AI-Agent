@@ -1,0 +1,221 @@
+{
+  "name": "n8n-google-sheet-update-telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "16BVeoBWa5KtQ1yQlkfyzuTvXfA_edK0PYrQ5pophDwQ",
+          "mode": "list",
+          "cachedResultName": "[PMO] 프로젝트 관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16BVeoBWa5KtQ1yQlkfyzuTvXfA_edK0PYrQ5pophDwQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "PM 승용",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16BVeoBWa5KtQ1yQlkfyzuTvXfA_edK0PYrQ5pophDwQ/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:O11"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        160
+      ],
+      "id": "4aec7e18-79fe-450d-9e9a-d698ed9e6197",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "cL19ZYscd7AbJBPO",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=너는 우리 회사의 프로젝트 매니저로서, 다음 주간 프로젝트 현황 데이터를 기반으로 상부에 보고할 텔레그램 메시지를 작성해야 해.\n\n**보고 목표:**\n* 현재 진행 중인 주요 프로젝트의 상태를 요약 보고\n* 이번 주에 완료된 프로젝트 명시\n* 주요 위험 요소 및 특이사항(일정 지연, 예산 관련 등) 간결하게 언급\n\n**작성 규칙:**\n* 최대한 **짧고 간결하게** 작성. 불필요한 서론/결론은 생략.\n* 텔레그램 메시지처럼 핵심 정보 위주로 **각 프로젝트별 요약** 또는 **전반적인 현황 요약** 중 선택하여 보고. (둘 중 더 적절한 방식으로 판단해서 작성해 줘)\n* 프로젝트명, 상태, 진척도(%), 위험 요소, 비고(중요 내용만) 위주로 작성.\n* 필요시 **이모지 (✅, ⚠️, 🚧 등)**를 활용하여 가독성을 높여줘.\n* 세부 내용은 불렛 포인트 형식으로 정리해줘.\n* **이번주 날짜는 2025년 6월 15일 기준**으로 작성해줘.\n\n**예시 출력 양식:**\n✅ 주간 프로젝트 보고 (2025.06.15 기준)\n\n1. 주요 진행 프로젝트:\n- 웹사이트 리뉴얼 (PROJ-001): 🚧 60%. 디자인 시안 지연으로 일정 조정 필요.\n- 데이터 분석 시스템 (PROJ-004): 🚧 45%. 수집/전처리 완료, 분석 모델 개발 중.\n\n2. 이번 주 완료 프로젝트:\n- 팀 워크샵 (PROJ-010): ✅ 성공적으로 종료.\n\n3. 특이사항 및 위험 요소:\n- 웹사이트 리뉴얼: 디자인 변경 가능성 ⚠️\n- 모바일 앱 개발 (PROJ-002): 개발자 채용 어려움 ⚠️ (현재 기획 10%)\n\n**데이터:**"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        240,
+        160
+      ],
+      "id": "9587c6a7-a8be-44ba-b86e-de590bfaef66",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        328,
+        380
+      ],
+      "id": "f7bf5569-44de-4c51-960c-0cb936545a1e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Leo8yrirPIOn81hp",
+          "name": "Google Gemini Chat Model"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#n8n-bot",
+          "mode": "name"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        616,
+        60
+      ],
+      "id": "15bc28c2-9c8e-44d5-89d1-4e671350b9c0",
+      "name": "Slack",
+      "webhookId": "10624ed1-79dc-4801-9f07-037e1d00f42d",
+      "credentials": {
+        "slackApi": {
+          "id": "bpOerFKheyqJwnPf",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8123636831",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        616,
+        260
+      ],
+      "id": "74777c10-d7ea-40d6-87cc-8dee53ed2191",
+      "name": "Telegram",
+      "webhookId": "6161f2fc-6aee-47a1-ae6a-8ffc0e54f629",
+      "credentials": {
+        "telegramApi": {
+          "id": "iDYsysbbQ4q9DTCd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        20,
+        160
+      ],
+      "id": "57b6008d-9466-4586-9553-35232b46b579",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "21f812c0-a8ba-4643-93b5-a81aab199c81",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "knE3qasAMA5IkSPp",
+  "tags": []
+}

@@ -1,0 +1,220 @@
+{
+  "name": "n8n-ai-agent-chat-with-wikipedia",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -940,
+        -180
+      ],
+      "id": "33c95a0e-7999-4de7-9e1b-48db5fc43ace",
+      "name": "When chat message received",
+      "webhookId": "98e55740-ac99-4d28-b424-49d1ad50678a"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        -180
+      ],
+      "id": "1a018cc0-5b75-4185-b13c-c825b628c79b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "maxRetries": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1040,
+        120
+      ],
+      "id": "14c6f719-eb6a-4e6d-a400-c45fbe496c2f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JeXOH8Wdg2SzgL8M",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        40
+      ],
+      "id": "734fa8a3-13f3-463d-93f2-2b47fcae0d56",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -600,
+        40
+      ],
+      "id": "0dc7cc71-6581-4977-b524-3f660e5fc5ec",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## Chat Model List",
+        "height": 260,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1060,
+        20
+      ],
+      "typeVersion": 1,
+      "id": "0ee080ce-ff15-4b04-89f4-28a5a64ae725",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        120
+      ],
+      "id": "4c01c9ec-23d8-40dc-a641-04857e445a1a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Leo8yrirPIOn81hp",
+          "name": "Google Gemini Chat Model"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        40
+      ],
+      "id": "fbfb64b4-8e22-4bd6-9248-4c0f26043adc",
+      "name": "Wikipedia"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e37990b5-f124-4175-893f-86a1d6447dd9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "7olDx4rKhrXjiKzh",
+  "tags": [
+    {
+      "createdAt": "2025-06-13T01:57:42.013Z",
+      "updatedAt": "2025-06-13T01:57:42.013Z",
+      "id": "7uStAgfscsh9hGXD",
+      "name": "Chat"
+    },
+    {
+      "createdAt": "2025-06-13T01:57:47.585Z",
+      "updatedAt": "2025-06-13T01:57:47.585Z",
+      "id": "hwYNbLax568yWkAa",
+      "name": "Wikipedia"
+    }
+  ]
+}

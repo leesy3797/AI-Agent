@@ -1,0 +1,1105 @@
+{
+  "name": "n8n-youtube-summarization",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "get",
+        "videoId": "={{ $json.id.replace(\"yt:video:\", \"\") }}",
+        "part": [
+          "contentDetails",
+          "snippet",
+          "id"
+        ],
+        "options": {}
+      },
+      "id": "e64cce1f-a10d-427a-abd1-bb8d9ff3b95f",
+      "name": "Get video details",
+      "type": "n8n-nodes-base.youTube",
+      "position": [
+        1340,
+        100
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "RE4BInD7fS4UtA7D",
+          "name": "YouTube account"
+        }
+      },
+      "notes": "Make a call to the YouTube API so that we have the thumbnail for the email and the duration to filter out shorts."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "triggerAtMinute": 47
+            }
+          ]
+        }
+      },
+      "id": "cb5dd948-9764-4dbc-844d-7af84ffb48fa",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -420,
+        0
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 1,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "5342ecc0-d764-4bef-8161-d1f571fcb931",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.contentDetails.duration }}",
+              "rightValue": "\"duration\""
+            },
+            {
+              "id": "b82e3373-a28b-49bd-afa0-4f48cafe2bfe",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "leftValue": "={{ Duration.fromISO($json.contentDetails.duration).as('seconds') }}",
+              "rightValue": 61
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "f99a92d0-ed60-4f6e-ba53-3907dcbc424a",
+      "name": "Filter out shorts",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1560,
+        100
+      ],
+      "notesInFlow": false,
+      "typeVersion": 2,
+      "notes": "Sometime, some live broadcasts that are then posted as regular videos do not have a duration. That is why we check if `duration` is present in `contentDetails`."
+    },
+    {
+      "parameters": {
+        "content": "### Default frequency: every hour\nChanging it here is enough if you want to check for new videos at a higher or lower frequency. You don't have to edit anything else.",
+        "height": 460,
+        "width": 220,
+        "color": 7
+      },
+      "id": "7c08b7df-df4f-4357-9ab3-276fe09f7156",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        -300
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Get my subscriptions from the YouTube Data v3 API\nYou can expect to use 1 quota per 50 subscriptions per run, which is well within the 10 000/req a day allowed by default.",
+        "height": 460,
+        "width": 880,
+        "color": 5
+      },
+      "id": "21f9fb63-3de9-4e67-8a02-427a0199631c",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -260,
+        -200
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Get the 15 latest videos of each channel with RSS\nUsing the YouTube API instead would cost too many quotas to make it viable.",
+        "height": 280,
+        "width": 440,
+        "color": 4
+      },
+      "id": "221119bf-17c8-4334-b278-3c37254d90d2",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        840,
+        -20
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Call YouTube's API for more data\nWe need the thumbnails for the email and the duration to filter out shorts.",
+        "height": 280,
+        "width": 420,
+        "color": 3
+      },
+      "id": "04b1411e-8f24-48de-804d-a7ca466aab72",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1290,
+        -20
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Configure your email here\nTo go to the video from the email, simply click on the thumbnail.",
+        "height": 280,
+        "width": 260,
+        "color": 6
+      },
+      "id": "dbb25399-307f-4233-930e-2c1d99b397c5",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1840,
+        -180
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "=https://www.youtube.com/feeds/videos.xml?channel_id={{ $json.snippet.resourceId.channelId }}",
+        "options": {}
+      },
+      "id": "6b91fa79-7957-47e6-a8ef-b8f6f8f8e842",
+      "name": "Get latest 15 videos of each channel",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "position": [
+        900,
+        100
+      ],
+      "typeVersion": 1.1,
+      "notes": "YouTube provides an RSS feed for each channel with the 15 latest videos.\nWe use this instead of the YouTube Data v3 API, as search requests cost a lot of \"quota points\" and would easily put us over the daily limit with just one workflow run."
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/subscriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet,contentDetails"
+            },
+            {
+              "name": "mine",
+              "value": "true"
+            },
+            {
+              "name": "maxResults",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "pageToken",
+                    "value": "={{ $response.body.nextPageToken }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !('nextPageToken' in $response.body) }}"
+            }
+          }
+        }
+      },
+      "id": "a68356a2-5225-4e27-a3a3-8554afd085f5",
+      "name": "Get my subscriptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -200,
+        0
+      ],
+      "notesInFlow": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "RE4BInD7fS4UtA7D",
+          "name": "YouTube account"
+        }
+      },
+      "notes": "Get subscriptions from YouTube Data v3 API"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "5972ff90-aa5a-470c-aa96-87138eb60565",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "error"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b49bfe8b-ef4f-4db8-a541-6929c0b59ada",
+      "name": "Check for errors",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        20,
+        0
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "4734ee8c-1655-47be-bd45-a9527aee2833",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "leftValue": "={{ $json.contentDetails.newItemCount }}",
+              "rightValue": 0
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6b3e8789-595b-4c96-a531-0825ff7eed1d",
+      "name": "Only keep channels with unwatched videos",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        460,
+        100
+      ],
+      "typeVersion": 2.2,
+      "notes": "It's not a perfect indicator for new videos but helps reduce the amount of channels to process."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "65d905a2-c89e-41f3-a2cf-0d1a76c48d8e",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              },
+              "leftValue": "={{ $json.pubDate.toDateTime() }}",
+              "rightValue": "={{ \n  $('Schedule Trigger').item.json.timestamp.toDateTime().minus(\n    24,\n    $('Schedule Trigger').params.rule.interval[0].field\n  ).toISO()\n}}"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4acc51c7-7eb1-4720-b5ab-97a432b10616",
+      "name": "Keep only videos published since last run",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        1120,
+        100
+      ],
+      "typeVersion": 2.2,
+      "notes": "We dynamically figure out the last run's execution time through the settings of the \"Schedule Trigger\" node."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Status code: {{ $json.error.code }}\nMessage: {{ $json.error.message }}"
+      },
+      "id": "38df6412-fd55-4ee2-95e9-f051b2af30f2",
+      "name": "If the HTTP request failed, throw the error",
+      "type": "n8n-nodes-base.stopAndError",
+      "position": [
+        240,
+        -100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "id": "fcaddb25-0b99-419a-bac4-0c6511f1dd54",
+      "name": "Split out subscriptions to process individually",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        240,
+        100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Manually filter out channels\nTo find the channel ID of a channel, click on the description → Share channel → Copy channel ID",
+        "height": 360,
+        "width": 220
+      },
+      "id": "7a71e53b-27ae-4125-a890-63d8783879b1",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        620,
+        -100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b27b14a9-c86c-4ebd-8a0f-4e7db722796e",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              },
+              "leftValue": "={{[\n\"UCn_38aaCktkBLPv3EtfmiUA\",\n\"UCMc4EmuDxnHPc6pgGW-QWvQ\",\n\"UCSPMRoAphbObUYeDaX367Fg\"\n]}}",
+              "rightValue": "={{ $json.snippet.resourceId.channelId }}"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7ae9354e-4dfb-43f3-ad09-d6e5b33e2a81",
+      "name": "Filter out channels",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        680,
+        100
+      ],
+      "notesInFlow": true,
+      "typeVersion": 2.2,
+      "notes": "Optional step"
+    },
+    {
+      "parameters": {
+        "chatId": "8123636831",
+        "text": "=📢 새 동영상이 업로드되었습니다!\n📌 채널: {{ $json.snippet.channelTitle }} \n🎬 제목: {{ $json.snippet.title }} \n🔗 바로 보기: https://www.youtube.com/watch?v={{ $json.id}}\n✨ 동영상 내용을 요약하시겠어요?",
+        "additionalFields": {
+          "appendAttribution": "={{ false }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2000,
+        -100
+      ],
+      "id": "cff900c8-0003-4d03-bcb5-709586f1a21f",
+      "name": "Telegram",
+      "webhookId": "70eda5a4-2067-4abf-a21a-3b7478d3bdc0",
+      "notesInFlow": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "iDYsysbbQ4q9DTCd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actor-tasks/energetic_antenna~youtube-transcript-scraper-task/run-sync-get-dataset-items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"videoUrl\": \"https://www.youtube.com/watch?v={{ $json.id }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2220,
+        -100
+      ],
+      "id": "8f6f0130-74f6-4e99-a83f-1ddd166ba105",
+      "name": "Get Youtube Transcripts",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "yIuLFBZJ2qqkVMcG",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "texts = []\nfor row in _json['data']:\n    if 'text' in row:\n        texts.append(row['text'])\n\nfinal = {\n  'script': ' '.join(texts)\n}\n\nreturn final"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2440,
+        -100
+      ],
+      "id": "0370c5f1-b178-459d-84cc-d21f6c5c70d4",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "chunkingMode": "advanced",
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "combineMapPrompt": "다음 내용을 간결하게 요약해 주세요:\n\n\"{text}\"\n\n간결한 요약:",
+              "prompt": "다음 내용을 간결하게 요약해 주세요:\n\n\"{text}\"\n\n간결한 요약:"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2.1,
+      "position": [
+        2660,
+        -100
+      ],
+      "id": "21f175a0-a892-418f-a9ae-6617c98d1c78",
+      "name": "Summarization Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        120
+      ],
+      "id": "dbc9232c-175f-4297-9103-b27bacbbf38e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Leo8yrirPIOn81hp",
+          "name": "Google Gemini Chat Model"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8123636831",
+        "text": "=📢 요약된 영상 내용입니다.\n📌 채널: {{ $('Filter out shorts').item.json.snippet.channelTitle }}\n🎬 제목: {{ $('Filter out shorts').item.json.snippet.title }}\n🔗 바로 보기: https://www.youtube.com/watch?v={{ $('Filter out shorts').item.json.id }}\n✨ 요약 내용:\n{{ $json.output.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3036,
+        -100
+      ],
+      "id": "68874bac-de16-4c01-a371-6f5ff3eec3f7",
+      "name": "Telegram1",
+      "webhookId": "8ededcea-5374-44f4-834c-1d8d726f25e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "iDYsysbbQ4q9DTCd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "528405b1-aeeb-461f-a19a-55ab40ddec21",
+              "leftValue": "={{ $('Filter out shorts').item.json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1780,
+        0
+      ],
+      "id": "086d73d3-5e66-493a-bf49-e888115e84f5",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        200
+      ],
+      "id": "2cf59fc9-757c-4574-980e-4e1f45bea7b2",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        100
+      ],
+      "id": "3917d786-32ae-4e03-b6a8-cfce7f0a1ce3",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter",
+      "typeVersion": 1,
+      "position": [
+        2740,
+        140
+      ],
+      "id": "5d0dd415-746c-4328-a64c-168574297bca",
+      "name": "Token Splitter"
+    }
+  ],
+  "pinData": {
+    "Get Youtube Transcripts": [
+      {
+        "json": {
+          "data": [
+            {
+              "start": "0.359",
+              "dur": "2.320",
+              "text": "뭐 제가 이번 앨범 영상 찍을 때"
+            },
+            {
+              "start": "2.679",
+              "dur": "1.640",
+              "text": "과학적인 움직임을 한번 했습니다"
+            },
+            {
+              "start": "4.319",
+              "dur": "2.520",
+              "text": "결과적으로는 그 뮤직비디오를 만들지"
+            },
+            {
+              "start": "6.839",
+              "dur": "3.001",
+              "text": "못했는데 풍선에 헬륨 가스를 넣고"
+            },
+            {
+              "start": "9.840",
+              "dur": "3.240",
+              "text": "카메라와 GPS를 달고 올려보냈어요"
+            },
+            {
+              "start": "13.080",
+              "dur": "2.840",
+              "text": "아 그 성권 찍어 보려고 간단한"
+            },
+            {
+              "start": "15.920",
+              "dur": "3.000",
+              "text": "장비로 이제 대기권 근처에서 찍을 수"
+            },
+            {
+              "start": "18.920",
+              "dur": "2.119",
+              "text": "있는 방법 있잖아요 네 청문학과"
+            },
+            {
+              "start": "21.039",
+              "dur": "1.921",
+              "text": "친구들 불러 가지고 아 진짜 그"
+            },
+            {
+              "start": "22.960",
+              "dur": "2.440",
+              "text": "친구들이 그 예상 경록 짜주고 해서"
+            },
+            {
+              "start": "25.400",
+              "dur": "2.199",
+              "text": "올려보냈는데 신기하더라고 확 이렇게"
+            },
+            {
+              "start": "27.599",
+              "dur": "2.840",
+              "text": "올라가더라고요 하늘 높이 하고"
+            },
+            {
+              "start": "30.439",
+              "dur": "2.041",
+              "text": "GPS에서 계속 확인하면서 근데"
+            },
+            {
+              "start": "32.480",
+              "dur": "2.320",
+              "text": "바다이 떨어졌어요 바다 예 바다에"
+            },
+            {
+              "start": "34.800",
+              "dur": "2.200",
+              "text": "떨어졌는데 그거를 또 이제 수고를 해"
+            },
+            {
+              "start": "37.000",
+              "dur": "2.440",
+              "text": "보고 싶었는데 아쉽다 그 스테프"
+            },
+            {
+              "start": "39.440",
+              "dur": "2.320",
+              "text": "원어를 사례금 있음 이렇게 써놔가지고"
+            },
+            {
+              "start": "41.760",
+              "dur": "2.440",
+              "text": "아 진짜로 무위에 뜨는 형태인가요 어"
+            },
+            {
+              "start": "44.200",
+              "dur": "1.960",
+              "text": "어떻게 해 놨더라고 무리에 뜨게 아"
+            },
+            {
+              "start": "46.160",
+              "dur": "2.200",
+              "text": "사례금 있습니다 사례금 얼마 정도"
+            },
+            {
+              "start": "48.360",
+              "dur": "2.879",
+              "text": "됩니까 최소 30 정도 되는데 그또"
+            },
+            {
+              "start": "51.239",
+              "dur": "2.320",
+              "text": "이제 제 사진을 이렇게 그니까 올"
+            },
+            {
+              "start": "53.559",
+              "dur": "2.000",
+              "text": "올라가면은 얼굴이 나오게 맞아 맞아"
+            },
+            {
+              "start": "55.559",
+              "dur": "1.480",
+              "text": "이걸 해야 돼 이걸 해야 돼 그래야지"
+            },
+            {
+              "start": "57.039",
+              "dur": "4.081",
+              "text": "내 거니까 예 좀 아쉬웠다는"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "data": [
+            {
+              "start": "0.199",
+              "dur": "3.081",
+              "text": "독일 BMW가 세계 최초로 전고체"
+            },
+            {
+              "start": "3.280",
+              "dur": "2.479",
+              "text": "배터리를 실제 차량에 달고 주행한는데"
+            },
+            {
+              "start": "5.759",
+              "dur": "3.041",
+              "text": "성공하며 진짜 난리가 났습니다 대형"
+            },
+            {
+              "start": "8.800",
+              "dur": "1.959",
+              "text": "전고체 배터리를 탑재한 차량 주행"
+            },
+            {
+              "start": "10.759",
+              "dur": "2.401",
+              "text": "테스트로는 글로벌 자동차 제조사"
+            },
+            {
+              "start": "13.160",
+              "dur": "2.599",
+              "text": "중에서 가장 빠른 겁니다 전기차 충전"
+            },
+            {
+              "start": "15.759",
+              "dur": "2.761",
+              "text": "거리 1000km 완중까지 10분"
+            },
+            {
+              "start": "18.520",
+              "dur": "2.120",
+              "text": "걸리는 세대가 지금 눈앞에 온 거죠"
+            },
+            {
+              "start": "20.640",
+              "dur": "2.639",
+              "text": "미국에서 전고태 배터리를 개발하는"
+            },
+            {
+              "start": "23.279",
+              "dur": "2.681",
+              "text": "솔리드 파워라는 기업이 BMW랑"
+            },
+            {
+              "start": "25.960",
+              "dur": "2.000",
+              "text": "협업하고 있습니다 유럽 입장에서도"
+            },
+            {
+              "start": "27.960",
+              "dur": "2.520",
+              "text": "미국 기업이랑 협업해서 아마 이게"
+            },
+            {
+              "start": "30.480",
+              "dur": "2.680",
+              "text": "단기적으로는 한국 기업들에게 일종의"
+            },
+            {
+              "start": "33.160",
+              "dur": "2.040",
+              "text": "스포트니 쇼크 같은 것으로 작용할"
+            },
+            {
+              "start": "35.200",
+              "dur": "2.359",
+              "text": "것이라 바라보고 있고요 장기적으로는"
+            },
+            {
+              "start": "37.559",
+              "dur": "1.761",
+              "text": "우리나라 2차전지 기업들의 손실은"
+            },
+            {
+              "start": "39.320",
+              "dur": "2.480",
+              "text": "크게 늘어날 것이고 시장의 파일을"
+            },
+            {
+              "start": "41.800",
+              "dur": "2.320",
+              "text": "빼앗기 시작을 할 거예요 우리나라"
+            },
+            {
+              "start": "44.120",
+              "dur": "2.599",
+              "text": "2차전지 관련 주들도 고점 대비"
+            },
+            {
+              "start": "46.719",
+              "dur": "4.801",
+              "text": "-82% 정도 빠지면서 대폭을했잖아요"
+            }
+          ]
+        }
+      }
+    ],
+    "Summarization Chain": [
+      {
+        "json": {
+          "output": {
+            "text": "가수는 앨범 홍보용으로 헬륨 풍선에 카메라와 GPS를 달아 성층권 촬영을 시도했지만, 풍선이 바다에 떨어져 회수하지 못했다. 회수 시 사례금 30만원과 가수 얼굴이 나오는 장치가 필요했지만 실패를 아쉬워했다.\n"
+          }
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "text": "BMW가 솔리드 파워와 협력하여 전고체 배터리를 탑재한 차량 주행에 성공, 1000km 주행 및 10분 완충 시대를 앞당김. 이는 한국 2차전지 산업에 '스푸트니크 쇼크'로 작용하여 장기적으로 손실 증가 및 시장 점유율 감소를 야기할 수 있으며, 관련 국내 주가 하락을 심화시킬 수 있다는 우려가 제기됨.\n"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Check for errors": {
+      "main": [
+        [
+          {
+            "node": "If the HTTP request failed, throw the error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split out subscriptions to process individually",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get my subscriptions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out shorts": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get video details": {
+      "main": [
+        [
+          {
+            "node": "Filter out shorts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out channels": {
+      "main": [
+        [
+          {
+            "node": "Get latest 15 videos of each channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get my subscriptions": {
+      "main": [
+        [
+          {
+            "node": "Check for errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get latest 15 videos of each channel": {
+      "main": [
+        [
+          {
+            "node": "Keep only videos published since last run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only keep channels with unwatched videos": {
+      "main": [
+        [
+          {
+            "node": "Filter out channels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep only videos published since last run": {
+      "main": [
+        [
+          {
+            "node": "Get video details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split out subscriptions to process individually": {
+      "main": [
+        [
+          {
+            "node": "Only keep channels with unwatched videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Get Youtube Transcripts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Youtube Transcripts": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a617e791-b602-48f6-8445-6083021c0b81",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "xtd0DK0BKHdUP4tY",
+  "tags": []
+}
