@@ -137,7 +137,7 @@ async def crawl_new_articles():
 async def get_user_news(user_id: str) -> List[NewsArticle]:
     """사용자에게 보여줄 뉴스 목록을 가져옵니다."""
     # DB에서 12시간 이내의 기사 가져오기
-    articles = crawler.get_latest_news(max_articles=10)
+    articles = crawler.get_latest_news(max_articles=20)
     logger.info(f"DB에서 가져온 총 기사 수: {len(articles)}")
     
     # DB에서 사용자가 읽지 않은 기사만 필터링

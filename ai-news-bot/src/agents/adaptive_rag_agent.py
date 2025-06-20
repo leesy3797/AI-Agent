@@ -138,7 +138,7 @@ def all_search_node(state, ensemble_retriever):
 
 def web_search_func(query):
     search = DuckDuckGoSearchAPIWrapper()
-    results = search.results(query=query, max_results=5)
+    results = search.results(query=query, max_results=10)
     if not results:
         return [Document(page_content=f"검색 결과 없음: {query}")]
     return [Document(page_content=f"{item['title']} - {item.get('snippet','')}") for item in results]
@@ -210,6 +210,7 @@ def generate_with_gemini_node(state):
 {user_question}
 
 위 참고 내용만 바탕으로, 사용자의 질문에 대해 정확하고 친절하게 답변해 주세요.
+절대 마크다운 문법(*, -, #)을 사용하지 말고, 필요하다면 이모지를 사용해서 항목을 구분해주세요.
 """
     print(f"[generate_with_gemini_node] LLM 프롬프트 미리보기: {prompt[:80]} ...")
     model = genai.GenerativeModel('models/gemini-2.0-flash')
