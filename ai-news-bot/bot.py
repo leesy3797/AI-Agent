@@ -27,7 +27,7 @@ from langchain_core.documents import Document
 from src.crawler.aitimes import AITimesCrawler, NewsArticle
 from src.database.connection import get_db
 from src.database.crud import get_user_by_telegram_id, mark_article_as_read, get_unread_articles, get_article_by_id, create_user_read, get_article_by_url, create_article
-from src.agents.adaptive_rag_agent import AdaptiveRAGAgent
+from src.agents.agentic_rag_agent import AgenticRAGAgent
 
 # 환경 변수 로드
 load_dotenv()
@@ -126,8 +126,18 @@ def load_vectorstore():
         ensemble = build_ensemble_retriever(faiss_all, bm25_all)
         return ensemble
 
+# 앙상블 리트리버 생성 함수 (AgenticRAGAgent에서 사용)
+def build_ensemble_retriever(faiss_vectorstore, bm25_retriever):
+    faiss_retriever = faiss_vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 8})
+    bm25_retriever.k = 8
+    from langchain.retrievers.ensemble import EnsembleRetriever
+    return EnsembleRetriever(
+        retrievers=[faiss_retriever, bm25_retriever],
+        weights=[0.6, 0.4]  # FAISS에 더 높은 가중치
+    )
+
 # embedding_model은 한 번만 생성해서 재사용
-rag_agent = AdaptiveRAGAgent()
+rag_agent = AgenticRAGAgent()
 
 # 자동 크롤링 (스케줄러에서 호출)
 async def crawl_new_articles():
@@ -174,7 +184,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """도움말을 보여줍니다."""
     help_text = (
-        "🤖 AI 뉴스 봇 사용 방법\n\n"
+        "�� AI 뉴스 봇 사용 방법\n\n"
         "1. /news - 최신 AI 뉴스 목록을 보여줍니다.\n"
         "2. 뉴스 제목을 클릭하면 요약을 볼 수 있습니다.\n"
         "3. 요약 후 '이 기사로 대화하기'를 선택하면 AI와 대화할 수 있습니다.\n\n"
