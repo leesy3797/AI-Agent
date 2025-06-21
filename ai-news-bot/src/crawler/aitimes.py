@@ -45,6 +45,8 @@ class AITimesCrawler:
     
     def _parse_date(self, date_str: str) -> datetime:
         """날짜 문자열을 datetime 객체로 변환합니다."""
+        logger.info(f'###### 날짜 텍스트 {date_str} ######')
+
         try:
             # "2025.06.18 10:30" 형식의 날짜 문자열을 파싱
             return datetime.strptime(date_str.strip(), "%Y.%m.%d %H:%M")
@@ -156,12 +158,6 @@ class AITimesCrawler:
             if not soup:
                 return None
                 
-            # # 본문 div 추출
-            # article_div = soup.select_one('article#article-view-content-div')
-            # if not article_div:
-            #     logger.warning(f"[Article Div] Could not find article content at {url}")
-            #     return None
-                
             # 제목 추출
             title = soup.select_one('#articleViewCon > article > header > h3')
             if not title:
@@ -170,11 +166,14 @@ class AITimesCrawler:
             title = title.get_text(strip=True)
             
             # 날짜 추출
-            date_str = soup.select_one('#articleViewCon > article > header > div.info-group > article:nth-child(1) > ul > li:nth-child(2) > i')
-            if not date_str:
+            date_element = soup.select_one('i.icon-clock-o')
+            if not date_element:
                 logger.warning(f"[Date] Could not find article date at {url}")
                 return None
-            date_str = date_str.get_text(strip=True)
+            
+            # 부모 li 태그에서 텍스트 추출하고 "입력 " 제거
+            date_str = date_element.parent.get_text(strip=True).replace('입력 ', '')
+            logger.info(f'###### 파싱된 날짜 {date_str} ######')
             published_at = self._parse_date(date_str)
             
             # 본문 추출

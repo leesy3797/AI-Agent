@@ -39,6 +39,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# SQLAlchemy 로그 비활성화 (SQL 쿼리 로그 출력 방지)
+logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
+logging.getLogger('sqlalchemy.pool').setLevel(logging.WARNING)
+
+
 # 텔레그램 봇 토큰
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:

@@ -23,7 +23,13 @@ GRADE_PROMPT = """
 {context}
 
 이 context만으로 사용자의 질문에 충분히 답변할 수 있으면 'yes', 부족하면 'no'로만 답변하세요.
-"""
+
+답변 기준:
+- context에 질문과 관련된 구체적인 정보가 있으면 'yes'
+- context가 비어있거나 질문과 관련 없는 내용이면 'no'
+- context가 있지만 질문에 대한 구체적인 답변이 불가능하면 'no'
+
+답변: """
 
 # Gemini2.0-flash LLM을 이용해 context가 답변에 충분한지 평가하는 함수
 # (VectorDB에서 Retrieve된 문서가 user query에 대해 답변하기에 적절/충분한지 판정)
@@ -36,11 +42,17 @@ def context_sufficient_llm(question: str, context: str) -> bool:
     """
     grader_model = genai.GenerativeModel('models/gemini-2.0-flash')
     prompt = GRADE_PROMPT.format(question=question, context=context)
-    # logger.info(f"[Grader] 질문: {question}\n컨텍스트 길이: {len(context)}")
+    print(f"[context_sufficient_llm] 질문: {question}")
+    print(f"[context_sufficient_llm] 컨텍스트 길이: {len(context)}")
+    print(f"[context_sufficient_llm] 컨텍스트 미리보기: {context[:200]} ...")
+    
     response = grader_model.generate_content(prompt)
     answer = response.text.strip().lower()
-    # logger.info(f"[Grader] LLM 판정 결과: {answer}")
-    return answer.startswith("yes")
+    print(f"[context_sufficient_llm] LLM 판정 결과: '{answer}'")
+    
+    is_sufficient = answer.startswith("yes")
+    print(f"[context_sufficient_llm] 최종 판정: {is_sufficient}")
+    return is_sufficient
 
 
 # 앙상블 리트리버 생성 함수 (유틸)
@@ -104,7 +116,8 @@ def article_search_node(state, ensemble_retriever, article_id=None):
         else:
             context = []
     else:
-        context = ensemble_retriever.invoke(user_question)
+        # article_id가 없으면 빈 context 반환 (전체 검색은 all_search_node에서 수행)
+        context = []
     print(f"[article_search_node] context 개수: {len(context)}")
     for i, doc in enumerate(context):
         print(f"  [{i}] {getattr(doc, 'page_content', str(doc))[:80]} ...")
@@ -164,13 +177,30 @@ def context_sufficiency_condition(state) -> str:
     print('LLM 문맥 평가 분기')
     user_question = get_user_question_from_state(state)
     context = state.get("context", [])
+    
+    # context가 비어있으면 무조건 insufficient
+    if not context:
+        print("[context_sufficiency_condition] context가 비어있음 -> insufficient")
+        return "insufficient"
+    
     if context and hasattr(context[0], "page_content"):
         context_text = "\n\n".join([doc.page_content for doc in context])
     else:
         context_text = "\n\n".join([str(c) for c in context])
+    
+    print(f"[context_sufficiency_condition] context 길이: {len(context_text)}")
+    print(f"[context_sufficiency_condition] context 미리보기: {context_text[:200]} ...")
+    
+    # context가 너무 짧으면 insufficient로 판단
+    if len(context_text.strip()) < 50:
+        print("[context_sufficiency_condition] context가 너무 짧음 -> insufficient")
+        return "insufficient"
+    
     if context and context_sufficient_llm(user_question, context_text):
+        print("[context_sufficiency_condition] LLM 판정: sufficient")
         return "sufficient"
     else:
+        print("[context_sufficiency_condition] LLM 판정: insufficient")
         return "insufficient"
     
 def build_prompt(context: List, user_question: str, chat_history: List[Tuple[str, str]]) -> str:
@@ -229,20 +259,34 @@ def build_adaptive_rag_graph(ensemble_retriever, article_id=None):
     workflow.add_node("all_search", lambda state: all_search_node(state, ensemble_retriever))
     workflow.add_node("web_search", web_search_node)
     workflow.add_node("generate_answer", generate_with_gemini_node)
+    
     # 엣지 연결
     workflow.add_edge(START, "article_search")
+    
+    # article_search 후 분기
     workflow.add_conditional_edges(
         "article_search",
         context_sufficiency_condition,
-        {"sufficient": "generate_answer", "insufficient": "all_search"}
+        {
+            "sufficient": "generate_answer", 
+            "insufficient": "all_search"
+        }
     )
+    
+    # all_search 후 분기
     workflow.add_conditional_edges(
         "all_search",
         context_sufficiency_condition,
-        {"sufficient": "generate_answer", "insufficient": "web_search"}
+        {
+            "sufficient": "generate_answer", 
+            "insufficient": "web_search"
+        }
     )
+    
+    # web_search는 항상 generate_answer로
     workflow.add_edge("web_search", "generate_answer")
     workflow.add_edge("generate_answer", END)
+    
     # 컴파일
     return workflow.compile()
 
@@ -302,3 +346,30 @@ class AdaptiveRAGAgent:
 if __name__ == "__main__":
     user_question = "빅테크들이 ai 기술로 해고한 사례가 있으면 설명해줘."
     debug_run_graph(graph, user_question)
+
+def debug_run_graph(graph, user_question):
+    """디버깅용 함수"""
+    from langchain_core.messages import convert_to_messages
+    state = {
+        "messages": convert_to_messages([
+            {"role": "user", "content": user_question}
+        ]),
+        "context": [],
+        "trace": []
+    }
+    
+    print(f"=== Graph 실행 시작 ===")
+    print(f"질문: {user_question}")
+    
+    for chunk in graph.stream(state):
+        for node, update in chunk.items():
+            print(f"\n=== {node} 노드 실행 ===")
+            print(f"업데이트된 키들: {list(update.keys())}")
+            if "context" in update:
+                print(f"컨텍스트 개수: {len(update['context'])}")
+            if "answer" in update:
+                print(f"답변: {update['answer']}")
+            if "trace" in update:
+                print(f"트레이스: {update['trace']}")
+    
+    print(f"\n=== Graph 실행 완료 ===")
