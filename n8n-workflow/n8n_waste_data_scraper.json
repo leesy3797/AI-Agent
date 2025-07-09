@@ -1,0 +1,5998 @@
+{
+  "name": "n8n_waste_data_scraper",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2880,
+        1640
+      ],
+      "id": "15d7a0e9-eeb3-469f-a596-c47d20a750e9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "http://www.recycling-info.or.kr/sds/JsonApi.do",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "KEY",
+              "value": "AJMRTZWG6YUXQ4PQBFUGYGZE8YJTH3DYIK8BUKGUNAMBE"
+            },
+            {
+              "name": "PID",
+              "value": "NTN007"
+            },
+            {
+              "name": "USRID",
+              "value": "leesy7197"
+            },
+            {
+              "name": "YEAR",
+              "value": "={{ $('Split Out2').item.json.year }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2020,
+        -640
+      ],
+      "id": "59ef3f4e-2fce-4004-8d20-4e2d414eec68",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2dd93df6-e102-4e0b-ab39-c350fa407e0a",
+              "name": "dataHeader",
+              "value": "={{ $('HTTP Request').item.json.dataHeader }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -900,
+        -960
+      ],
+      "id": "4754d685-6a2a-41a5-95c5-1eb8df2f6b07",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "db71d6de-87b2-450b-8059-ccba85f98f41",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -20,
+        -410
+      ],
+      "id": "eeb35695-8887-436e-a318-f4a017726fad",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -410
+      ],
+      "id": "625390a1-c4a7-40f2-b5be-f33b76d558ef",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw",
+          "mode": "list",
+          "cachedResultName": "나-1-a+b. (시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CITY_JIDT_CD_NM",
+              "displayName": "CITY_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WT_TYPE_GB_NM",
+              "displayName": "WT_TYPE_GB_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WSTE_M_CODE_NM",
+              "displayName": "WSTE_M_CODE_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WSTE_CODE_NM",
+              "displayName": "WSTE_CODE_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WSTE_QTY",
+              "displayName": "WSTE_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_RECY_QTY",
+              "displayName": "TOT_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_INCI_QTY",
+              "displayName": "TOT_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_FILL_QTY",
+              "displayName": "TOT_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_ETC_QTY",
+              "displayName": "TOT_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_RECY_QTY",
+              "displayName": "PUB_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_INCI_QTY",
+              "displayName": "PUB_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_FILL_QTY",
+              "displayName": "PUB_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_ETC_QTY",
+              "displayName": "PUB_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_RECY_QTY",
+              "displayName": "SELF_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_INCI_QTY",
+              "displayName": "SELF_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_FILL_QTY",
+              "displayName": "SELF_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_ETC_QTY",
+              "displayName": "SELF_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_RECY_QTY",
+              "displayName": "COM_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_INCI_QTY",
+              "displayName": "COM_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_FILL_QTY",
+              "displayName": "COM_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_ETC_QTY",
+              "displayName": "COM_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        860,
+        -1060
+      ],
+      "id": "15bfe263-a15b-4710-9bff-d14d35cd7f27",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw",
+          "mode": "list",
+          "cachedResultName": "나-1-a+b. (시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "dataHeader"
+          ],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "dataHeader",
+              "displayName": "dataHeader",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CITY_JIDT_CD_NM",
+              "displayName": "CITY_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WT_TYPE_GB_NM",
+              "displayName": "WT_TYPE_GB_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WSTE_M_CODE_NM",
+              "displayName": "WSTE_M_CODE_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WSTE_CODE_NM",
+              "displayName": "WSTE_CODE_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WSTE_QTY",
+              "displayName": "WSTE_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_RECY_QTY",
+              "displayName": "TOT_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_INCI_QTY",
+              "displayName": "TOT_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_FILL_QTY",
+              "displayName": "TOT_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_ETC_QTY",
+              "displayName": "TOT_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_RECY_QTY",
+              "displayName": "PUB_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_INCI_QTY",
+              "displayName": "PUB_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_FILL_QTY",
+              "displayName": "PUB_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PUB_ETC_QTY",
+              "displayName": "PUB_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_RECY_QTY",
+              "displayName": "SELF_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_INCI_QTY",
+              "displayName": "SELF_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_FILL_QTY",
+              "displayName": "SELF_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SELF_ETC_QTY",
+              "displayName": "SELF_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_RECY_QTY",
+              "displayName": "COM_RECY_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_INCI_QTY",
+              "displayName": "COM_INCI_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_FILL_QTY",
+              "displayName": "COM_FILL_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COM_ETC_QTY",
+              "displayName": "COM_ETC_QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "YEAR",
+              "displayName": "YEAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -460,
+        -960
+      ],
+      "id": "872792a5-ede5-4939-90de-5fe0599c02fb",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw",
+          "mode": "list",
+          "cachedResultName": "나-1-a+b. (시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:U2\t\t\t\t\t\t \t\t\t\t\t\t\t\t"
+            }
+          },
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1560,
+        -860
+      ],
+      "id": "06fd622c-418a-4894-832c-6e04c12b8714",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f7bab461-1c1a-4c00-9900-aea3a83b5250",
+              "leftValue": "={{ $('Get row(s) in sheet').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        -860
+      ],
+      "id": "9131d696-1bcf-4ecd-88e5-94659d474348",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\nfor item in _input.all():\n  item.json.dataHeader[0]['WSTE_QTY'] = '해당연도_발생량'\n  item.json.dataHeader[0]['YEAR'] = '기준연도'\nreturn item.json.dataHeader[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        -960
+      ],
+      "id": "14e3bcfa-1c83-44aa-8da2-a558ebcd931e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "res = {\n  'year' : [2020, 2021, 2022, 2023, 2024, 2025]\n}\n\nreturn res"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2660,
+        -360
+      ],
+      "id": "e36fb37c-47ed-4c93-acfb-04a198df1b40",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "year",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        -360
+      ],
+      "id": "29dd63d4-97a0-42ee-9c38-fda9e7094113",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json['YEAR'] = _('HTTP Request').all()[0].json.result[0].YEAR\nreturn _input.all()"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        -860
+      ],
+      "id": "56f2d31a-57b1-4ad9-860b-43f0bba27ec0",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw",
+          "mode": "list",
+          "cachedResultName": "나-1-a+b. (시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시도) 생활계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EhOy9fk60s3LNj6Il3rWfnxmfV2gMMImFXeBvuK-dyw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "YEAR",
+              "lookupValue": "={{ $('HTTP Request').item.json.result[0].YEAR }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -240,
+        -860
+      ],
+      "id": "d6164a02-6c97-4836-bacd-253de2475f29",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fb284896-40a4-4d47-8b2d-bdfde8c17ce4",
+              "leftValue": "={{ $('Get row(s) in sheet1').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        -860
+      ],
+      "id": "513656f9-8c3d-4563-b6fc-fe5f092dbb61",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        420,
+        -1010
+      ],
+      "id": "172d35a2-69b6-4715-bf09-06bc4a78eaff",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2220,
+        -360
+      ],
+      "id": "8d2e3d22-5d47-4dbf-a65e-b6723ce9541c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1080,
+        -685
+      ],
+      "id": "9360cf9c-1ba2-4cd3-82fc-de45da22f53b",
+      "name": "Wait2",
+      "webhookId": "743b65ed-9c11-467f-a56f-91557af7dd35"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1340,
+        -860
+      ],
+      "id": "aafd94eb-ef71-4dd3-af5f-f44be969ea25",
+      "name": "Wait",
+      "webhookId": "b22c89f6-50f0-43a8-b459-0cbd0b98ee9f",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -20,
+        -860
+      ],
+      "id": "f997cfed-f461-4bd4-8c9c-f3c31f2a5854",
+      "name": "Wait1",
+      "webhookId": "1c2b60a7-233d-4460-80ea-e05598dc2df6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3904aca0-1062-4fa3-92ef-fe74d2ba0fb8",
+              "leftValue": "={{ $json.result[0].ERR_CODE }}",
+              "rightValue": "E000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1780,
+        -635
+      ],
+      "id": "8c9671b4-6e0e-4a8b-b4b1-0ea17fb0d690",
+      "name": "If2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        -385
+      ],
+      "id": "b7baa745-8b25-4a4d-88ec-d2c49445d5a4",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "batchSize": 1000,
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        640,
+        -1010
+      ],
+      "id": "3f40f9f7-2958-490c-9a4c-d6f28dfcc37f",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "url": "http://www.recycling-info.or.kr/sds/JsonApi.do",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "KEY",
+              "value": "AJMRTZWG6YUXQ4PQBFUGYGZE8YJTH3DYIK8BUKGUNAMBE"
+            },
+            {
+              "name": "PID",
+              "value": "NTN002"
+            },
+            {
+              "name": "USRID",
+              "value": "leesy7197"
+            },
+            {
+              "name": "YEAR",
+              "value": "={{ $('Split Out3').item.json.year }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2000,
+        115
+      ],
+      "id": "93df74ed-1442-49b5-9d83-4bfa1d965653",
+      "name": "HTTP Request1",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "res = {\n  'year' : [2020, 2021, 2022, 2023, 2024, 2025]\n}\n\nreturn res"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2660,
+        315
+      ],
+      "id": "a38dd08c-ffd5-4769-aa7a-ae3d0eaaf35b",
+      "name": "Code3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "year",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        315
+      ],
+      "id": "5416f770-2269-4066-be2a-0331298c78fe",
+      "name": "Split Out3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2220,
+        315
+      ],
+      "id": "7ce074f5-9a19-48bb-9be0-7b8940b00698",
+      "name": "Loop Over Items2",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3904aca0-1062-4fa3-92ef-fe74d2ba0fb8",
+              "leftValue": "={{ $json.result[0].ERR_CODE }}",
+              "rightValue": "E000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1780,
+        215
+      ],
+      "id": "fecb5eb9-48ed-456a-b38b-8d5b53469d5c",
+      "name": "If3",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        -85
+      ],
+      "id": "8ce07155-e711-4a5d-801d-565309a7b0a0",
+      "name": "No Operation, do nothing",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69167a1b-5198-41c8-8604-1684ce1fb18e",
+              "name": "dataHeader",
+              "value": "={{ $json.dataHeader }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1780,
+        15
+      ],
+      "id": "06674ea0-adfd-4180-9d85-7e038a6bdca6",
+      "name": "Edit Fields2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.dataHeader[0].YEAR = '기준연도'\nreturn item.json.dataHeader[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1560,
+        15
+      ],
+      "id": "88513083-00c4-4d22-b035-e00a00f1f3f3",
+      "name": "Code4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc",
+          "mode": "list",
+          "cachedResultName": "NTN002 (시군구) 생활폐기물관리구역현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시군구) 생활폐기물관리구역현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CITY_JIDT_CD_NM",
+              "displayName": "CITY_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTS_JIDT_CD_NM",
+              "displayName": "CTS_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_AREA",
+              "displayName": "TOT_AREA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_POP",
+              "displayName": "TOT_POP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_DONG",
+              "displayName": "TOT_DONG",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_HSHLD",
+              "displayName": "TOT_HSHLD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_AREA",
+              "displayName": "LIFEWT_MNG_AREA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_POP",
+              "displayName": "LIFEWT_MNG_POP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_DONG",
+              "displayName": "LIFEWT_MNG_DONG",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_HSHLD",
+              "displayName": "LIFEWT_MNG_HSHLD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_AREA",
+              "displayName": "LIFEWT_MNGEXCPT_AREA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_POP",
+              "displayName": "LIFEWT_MNGEXCPT_POP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_DONG",
+              "displayName": "LIFEWT_MNGEXCPT_DONG",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_HSHLD",
+              "displayName": "LIFEWT_MNGEXCPT_HSHLD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_AREA_RATIO",
+              "displayName": "MNGEXCPT_AREA_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_POP_RATIO",
+              "displayName": "MNGEXCPT_POP_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_DONG_RATIO",
+              "displayName": "MNGEXCPT_DONG_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_HSHLD_RATIO",
+              "displayName": "MNGEXCPT_HSHLD_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YEAR",
+              "displayName": "YEAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1340,
+        15
+      ],
+      "id": "b5bf0ac6-5bbf-4faa-86fc-03615083aa94",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5481b0bc-88a7-4396-adfd-9b479aba3f0c",
+              "name": "data",
+              "value": "={{ $('If3').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1120,
+        215
+      ],
+      "id": "178c3c6c-8d03-43c4-9e66-342d79ca48d9",
+      "name": "Edit Fields3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        215
+      ],
+      "id": "d683c3a9-5f96-42d0-a2eb-7058dbe9899d",
+      "name": "Split Out1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nitem.json.data.YEAR = _('HTTP Request1').first().json.result[0].YEAR\nreturn item.json.data"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        215
+      ],
+      "id": "af7d7915-39bd-4c68-9c10-b318527fe197",
+      "name": "Code5",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc",
+          "mode": "list",
+          "cachedResultName": "NTN002 (시군구) 생활폐기물관리구역현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시군구) 생활폐기물관리구역현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CITY_JIDT_CD_NM",
+              "displayName": "CITY_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTS_JIDT_CD_NM",
+              "displayName": "CTS_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_AREA",
+              "displayName": "TOT_AREA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_POP",
+              "displayName": "TOT_POP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_DONG",
+              "displayName": "TOT_DONG",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_HSHLD",
+              "displayName": "TOT_HSHLD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_AREA",
+              "displayName": "LIFEWT_MNG_AREA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_POP",
+              "displayName": "LIFEWT_MNG_POP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_DONG",
+              "displayName": "LIFEWT_MNG_DONG",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNG_HSHLD",
+              "displayName": "LIFEWT_MNG_HSHLD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_AREA",
+              "displayName": "LIFEWT_MNGEXCPT_AREA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_POP",
+              "displayName": "LIFEWT_MNGEXCPT_POP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_DONG",
+              "displayName": "LIFEWT_MNGEXCPT_DONG",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LIFEWT_MNGEXCPT_HSHLD",
+              "displayName": "LIFEWT_MNGEXCPT_HSHLD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_AREA_RATIO",
+              "displayName": "MNGEXCPT_AREA_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_POP_RATIO",
+              "displayName": "MNGEXCPT_POP_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_DONG_RATIO",
+              "displayName": "MNGEXCPT_DONG_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MNGEXCPT_HSHLD_RATIO",
+              "displayName": "MNGEXCPT_HSHLD_RATIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YEAR",
+              "displayName": "YEAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -460,
+        290
+      ],
+      "id": "0c40a2b9-e25c-427b-aa9f-0269d723b791",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89575bb5-9750-4a3a-84a6-b8a1c0693f1d",
+              "leftValue": "={{ $('Get row(s) in sheet2').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1340,
+        215
+      ],
+      "id": "f0933e8b-411c-483b-97cd-8b0fed70f28e",
+      "name": "If4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc",
+          "mode": "list",
+          "cachedResultName": "NTN002 (시군구) 생활폐기물관리구역현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시군구) 생활폐기물관리구역현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rqoxaGVrxfdfwRAjMUIdWhCjLSU6Xj3EG4md5IOo2Bc/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "YEAR",
+              "lookupValue": "={{ $json.result[0].YEAR }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1560,
+        215
+      ],
+      "id": "bed332d9-aa60-49ae-9d9e-9b1168dd10ce",
+      "name": "Get row(s) in sheet2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "http://www.recycling-info.or.kr/sds/JsonApi.do",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "KEY",
+              "value": "AJMRTZWG6YUXQ4PQBFUGYGZE8YJTH3DYIK8BUKGUNAMBE"
+            },
+            {
+              "name": "PID",
+              "value": "NTN011"
+            },
+            {
+              "name": "USRID",
+              "value": "leesy7197"
+            },
+            {
+              "name": "YEAR",
+              "value": "={{ $('Split Out4').item.json.year }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2000,
+        790
+      ],
+      "id": "56a02355-dc65-434e-b747-9135df5fc4ce",
+      "name": "HTTP Request2",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "res = {\n  'year' : [2020, 2021, 2022, 2023, 2024, 2025]\n}\n\nreturn res"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2660,
+        1165
+      ],
+      "id": "ded32af3-022d-4dc7-8c0c-5729998f57a5",
+      "name": "Code6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "year",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        1165
+      ],
+      "id": "8da9a5f1-82df-4757-a0ef-61585e93cc18",
+      "name": "Split Out4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2220,
+        1165
+      ],
+      "id": "7310f8ed-682b-4b6a-9f63-fc154440c5e8",
+      "name": "Loop Over Items3",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3904aca0-1062-4fa3-92ef-fe74d2ba0fb8",
+              "leftValue": "={{ $json.result[0].ERR_CODE }}",
+              "rightValue": "E000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1780,
+        890
+      ],
+      "id": "506bb7c8-ad65-45ba-a20a-af17601b06f7",
+      "name": "If5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69167a1b-5198-41c8-8604-1684ce1fb18e",
+              "name": "dataHeader",
+              "value": "={{ $json.dataHeader }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1780,
+        690
+      ],
+      "id": "c48e8c65-71bd-4bad-ab62-cb44b91e96ea",
+      "name": "Edit Fields4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.dataHeader[0].YEAR = '기준연도'\nreturn item.json.dataHeader[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1560,
+        690
+      ],
+      "id": "00ad40a6-377d-467c-aa0a-7a252ef615a1",
+      "name": "Code7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk",
+          "mode": "list",
+          "cachedResultName": "NTN011 (시군구) 관리인원 및 장비현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시군구) 관리인원 및 장비현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1340,
+        690
+      ],
+      "id": "8cecdbd8-0cb9-4fb9-8ff5-4bb687b926c4",
+      "name": "Append row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5481b0bc-88a7-4396-adfd-9b479aba3f0c",
+              "name": "data",
+              "value": "={{ $('If5').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1120,
+        890
+      ],
+      "id": "52cedac6-c311-43b2-b316-4dadf7144fed",
+      "name": "Edit Fields5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        890
+      ],
+      "id": "de46c1e6-e08b-483b-8118-d4e05c504860",
+      "name": "Split Out5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nitem.json.data.YEAR = _('HTTP Request2').first().json.result[0].YEAR\nreturn item.json.data"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        890
+      ],
+      "id": "99664919-732c-4d81-aee3-035d653570f3",
+      "name": "Code8",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk",
+          "mode": "list",
+          "cachedResultName": "NTN011 (시군구) 관리인원 및 장비현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시군구) 관리인원 및 장비현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CITY_JIDT_CD_NM",
+              "displayName": "CITY_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTS_JIDT_CD_NM",
+              "displayName": "CTS_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_PEOPLE",
+              "displayName": "TOT_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_CAR",
+              "displayName": "TOT_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_CART",
+              "displayName": "TOT_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_HEAVY",
+              "displayName": "TOT_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_PEOPLE",
+              "displayName": "PUB_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_CAR",
+              "displayName": "PUB_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_CART",
+              "displayName": "PUB_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_HEAVY",
+              "displayName": "PUB_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_PEOPLE",
+              "displayName": "SELF_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_CAR",
+              "displayName": "SELF_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_CART",
+              "displayName": "SELF_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_HEAVY",
+              "displayName": "SELF_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_PEOPLE",
+              "displayName": "COM_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_CAR",
+              "displayName": "COM_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_CART",
+              "displayName": "COM_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_HEAVY",
+              "displayName": "COM_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YEAR",
+              "displayName": "YEAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -460,
+        1065
+      ],
+      "id": "b2065ccf-6daa-4e06-b300-cb52153fc7f1",
+      "name": "Append row in sheet5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89575bb5-9750-4a3a-84a6-b8a1c0693f1d",
+              "leftValue": "={{ $('Get row(s) in sheet3').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1340,
+        890
+      ],
+      "id": "69018d6f-5108-4c97-ae0c-399cba95f590",
+      "name": "If6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk",
+          "mode": "list",
+          "cachedResultName": "NTN011 (시군구) 관리인원 및 장비현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "(시군구) 관리인원 및 장비현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zpDJsdoTkfOBpgZZ_LYeTsGrufWD8POeG0MGeW8bDMk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "YEAR",
+              "lookupValue": "={{ $json.result[0].YEAR }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1560,
+        890
+      ],
+      "id": "e6664bb8-9dca-48af-a77d-6d1f338f3ad2",
+      "name": "Get row(s) in sheet3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        990
+      ],
+      "id": "b97ee1f6-32d0-4daa-83be-efd1c2eedb2a",
+      "name": "No Operation, do nothing2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "http://www.recycling-info.or.kr/sds/JsonApi.do",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "KEY",
+              "value": "AJMRTZWG6YUXQ4PQBFUGYGZE8YJTH3DYIK8BUKGUNAMBE"
+            },
+            {
+              "name": "PID",
+              "value": "NTN012"
+            },
+            {
+              "name": "USRID",
+              "value": "leesy7197"
+            },
+            {
+              "name": "YEAR",
+              "value": "={{ $('Split Out6').item.json.year }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2000,
+        1640
+      ],
+      "id": "af2a811e-05b4-4835-9857-3f66c934333f",
+      "name": "HTTP Request3",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "res = {\n  'year' : [2020, 2021, 2022, 2023, 2024, 2025]\n}\n\nreturn res"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2660,
+        2090
+      ],
+      "id": "8f17542a-c6ab-430b-ab59-6d9efc7472be",
+      "name": "Code9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "year",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        2090
+      ],
+      "id": "551724fe-b81c-4b13-a5a7-31e2ec03205a",
+      "name": "Split Out6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2220,
+        2090
+      ],
+      "id": "2fee17d0-b3cd-427e-96ca-67a8d1c05a1c",
+      "name": "Loop Over Items4",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3904aca0-1062-4fa3-92ef-fe74d2ba0fb8",
+              "leftValue": "={{ $json.result[0].ERR_CODE }}",
+              "rightValue": "E000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1780,
+        1815
+      ],
+      "id": "be1c8f33-d845-4c48-bea9-e9590e03885f",
+      "name": "If7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69167a1b-5198-41c8-8604-1684ce1fb18e",
+              "name": "dataHeader",
+              "value": "={{ $('HTTP Request3').item.json.dataHeader }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1340,
+        1415
+      ],
+      "id": "5926f14c-e0e0-48ce-b2ec-944a2f94981f",
+      "name": "Edit Fields6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.dataHeader[0].YEAR = '기준연도'\nreturn item.json.dataHeader[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        1415
+      ],
+      "id": "c12728ee-30b8-4e3f-a485-a10b0015c2fa",
+      "name": "Code10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU",
+          "mode": "list",
+          "cachedResultName": "NTN012 (시군구) 수집운반차량현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -900,
+        1415
+      ],
+      "id": "46710c62-12cf-434d-9b68-8e2a93a6c639",
+      "name": "Append row in sheet6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5481b0bc-88a7-4396-adfd-9b479aba3f0c",
+              "name": "data",
+              "value": "={{ $('If7').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1120,
+        1815
+      ],
+      "id": "44c01ea3-d27e-4989-8286-fede09082287",
+      "name": "Edit Fields7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        1815
+      ],
+      "id": "47abd0d4-f4f5-458b-a4a4-12bc3d348875",
+      "name": "Split Out7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nitem.json.data.YEAR = _('HTTP Request3').first().json.result[0].YEAR\nreturn item.json.data"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        1815
+      ],
+      "id": "041d2a2f-ed67-45a2-bb06-5d03887fc91d",
+      "name": "Code11",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU",
+          "mode": "list",
+          "cachedResultName": "NTN012 (시군구) 수집운반차량현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CITY_JIDT_CD_NM",
+              "displayName": "CITY_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTS_JIDT_CD_NM",
+              "displayName": "CTS_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_PEOPLE",
+              "displayName": "TOT_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_CAR",
+              "displayName": "TOT_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_CART",
+              "displayName": "TOT_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOT_HEAVY",
+              "displayName": "TOT_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_PEOPLE",
+              "displayName": "PUB_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_CAR",
+              "displayName": "PUB_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_CART",
+              "displayName": "PUB_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PUB_HEAVY",
+              "displayName": "PUB_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_PEOPLE",
+              "displayName": "SELF_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_CAR",
+              "displayName": "SELF_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_CART",
+              "displayName": "SELF_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SELF_HEAVY",
+              "displayName": "SELF_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_PEOPLE",
+              "displayName": "COM_PEOPLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_CAR",
+              "displayName": "COM_CAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_CART",
+              "displayName": "COM_CART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COM_HEAVY",
+              "displayName": "COM_HEAVY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YEAR",
+              "displayName": "YEAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -460,
+        2015
+      ],
+      "id": "59f26a23-f658-4e6e-8fad-1ce7fa6907e0",
+      "name": "Append row in sheet7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89575bb5-9750-4a3a-84a6-b8a1c0693f1d",
+              "leftValue": "={{ $('Get row(s) in sheet4').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1340,
+        1815
+      ],
+      "id": "0cb6efbd-635e-4088-bbc2-91f96690436b",
+      "name": "If8",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU",
+          "mode": "list",
+          "cachedResultName": "NTN012 (시군구) 수집운반차량현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "YEAR",
+              "lookupValue": "={{ $json.result[0].YEAR }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1560,
+        1815
+      ],
+      "id": "c9e7e4a6-025e-4d28-b889-68bcbb6a13fc",
+      "name": "Get row(s) in sheet4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        1915
+      ],
+      "id": "2cb5b3ff-0b13-4462-b497-ac2e857755a9",
+      "name": "No Operation, do nothing3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e8547acd-fdc6-4f4d-9be9-d81218738792",
+              "leftValue": "={{ $('Get row(s) in sheet5').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1560,
+        1515
+      ],
+      "id": "b4a5085b-467d-4cdc-a356-01138678780e",
+      "name": "If9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU",
+          "mode": "list",
+          "cachedResultName": "NTN012 (시군구) 수집운반차량현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16kII0lm5Ywpx0djvw5XiQQz1x28wHJa_-dfmuG4pXbU/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:D2"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1780,
+        1515
+      ],
+      "id": "fd746fd5-5e25-4929-97a7-c4d684af6ad5",
+      "name": "Get row(s) in sheet5",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1340,
+        1615
+      ],
+      "id": "1b2c3543-8e19-4635-86a3-4f4b9bfb878b",
+      "name": "No Operation, do nothing4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "http://www.recycling-info.or.kr/sds/JsonApi.do",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "KEY",
+              "value": "AJMRTZWG6YUXQ4PQBFUGYGZE8YJTH3DYIK8BUKGUNAMBE"
+            },
+            {
+              "name": "PID",
+              "value": "NTN015"
+            },
+            {
+              "name": "USRID",
+              "value": "leesy7197"
+            },
+            {
+              "name": "YEAR",
+              "value": "={{ $('Split Out8').item.json.year }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2000,
+        2565
+      ],
+      "id": "46988a66-3c75-4070-aa89-6e4689078f26",
+      "name": "HTTP Request4",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "res = {\n  'year' : [2020, 2021, 2022, 2023, 2024, 2025]\n}\n\nreturn res"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2660,
+        3015
+      ],
+      "id": "3e6bae4a-05d2-4d96-a1f2-5dabc15b9f39",
+      "name": "Code12",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "year",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        3015
+      ],
+      "id": "1fbc7568-8966-4b97-a8db-186644c3a0a0",
+      "name": "Split Out8",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2220,
+        3015
+      ],
+      "id": "4d8ee2fb-df79-4d6c-81e6-0bc3b6b03faf",
+      "name": "Loop Over Items5",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3904aca0-1062-4fa3-92ef-fe74d2ba0fb8",
+              "leftValue": "={{ $json.result[0].ERR_CODE }}",
+              "rightValue": "E000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1780,
+        2740
+      ],
+      "id": "f4830c30-2efe-42f5-b903-2bd2bda55a18",
+      "name": "If10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69167a1b-5198-41c8-8604-1684ce1fb18e",
+              "name": "dataHeader",
+              "value": "={{ $('HTTP Request4').item.json.dataHeader }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1340,
+        2340
+      ],
+      "id": "74daf1a7-1bfc-4e12-9667-dc0314264fcf",
+      "name": "Edit Fields8",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.dataHeader[0].YEAR = '기준연도'\nreturn item.json.dataHeader[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        2340
+      ],
+      "id": "bd09188f-d2de-499a-9ed6-f71cb1f67ab6",
+      "name": "Code13",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790",
+          "mode": "list",
+          "cachedResultName": "NTN015 (시군구) 생활폐기물관리예산 ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -900,
+        2340
+      ],
+      "id": "9ac1d4d5-abf6-4317-bdb5-a0990f5de4ec",
+      "name": "Append row in sheet8",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5481b0bc-88a7-4396-adfd-9b479aba3f0c",
+              "name": "data",
+              "value": "={{ $('If10').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1120,
+        2740
+      ],
+      "id": "e757b62d-9ce5-4d92-9e07-745b194cd244",
+      "name": "Edit Fields9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        2740
+      ],
+      "id": "f1af3ea8-0daa-49a1-83d5-c92dc87bf874",
+      "name": "Split Out9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nitem.json.data.YEAR = _('HTTP Request4').first().json.result[0].YEAR\nreturn item.json.data"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        2740
+      ],
+      "id": "cd3970af-a796-4a3b-8e38-46509821620b",
+      "name": "Code14",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790",
+          "mode": "list",
+          "cachedResultName": "NTN015 (시군구) 생활폐기물관리예산 ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CITY_JIDT_CD_NM",
+              "displayName": "CITY_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CTS_JIDT_CD_NM",
+              "displayName": "CTS_JIDT_CD_NM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TOT_AMT",
+              "displayName": "TOT_AMT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NTN_AMT",
+              "displayName": "NTN_AMT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SMLL_AMT",
+              "displayName": "SMLL_AMT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WIDE_SELF_BUDGT",
+              "displayName": "WIDE_SELF_BUDGT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DSTRCT_AID_BUDGT",
+              "displayName": "DSTRCT_AID_BUDGT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DSTRCT_SELF_BUDGT",
+              "displayName": "DSTRCT_SELF_BUDGT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LOAN",
+              "displayName": "LOAN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LOCL_BOND",
+              "displayName": "LOCL_BOND",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TAX_FEE",
+              "displayName": "TAX_FEE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ETC",
+              "displayName": "ETC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "YEAR",
+              "displayName": "YEAR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -460,
+        2940
+      ],
+      "id": "b4a2d198-cad7-4234-9a95-62ceac55a3b8",
+      "name": "Append row in sheet9",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89575bb5-9750-4a3a-84a6-b8a1c0693f1d",
+              "leftValue": "={{ $('Get row(s) in sheet6').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1340,
+        2740
+      ],
+      "id": "c270c5a9-c206-4aa8-9ac4-c143500c36a3",
+      "name": "If11",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790",
+          "mode": "list",
+          "cachedResultName": "NTN015 (시군구) 생활폐기물관리예산 ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "YEAR",
+              "lookupValue": "={{ $json.result[0].YEAR }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1560,
+        2740
+      ],
+      "id": "62a2e1b0-0056-4db9-8c2b-912339b04745",
+      "name": "Get row(s) in sheet6",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        2840
+      ],
+      "id": "d443be1b-c96c-48e8-a356-a948262f0360",
+      "name": "No Operation, do nothing5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e8547acd-fdc6-4f4d-9be9-d81218738792",
+              "leftValue": "={{ $('Get row(s) in sheet7').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1560,
+        2440
+      ],
+      "id": "64b43c62-eaa0-4f8b-a40e-e537c72f2fa4",
+      "name": "If12",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790",
+          "mode": "list",
+          "cachedResultName": "NTN015 (시군구) 생활폐기물관리예산 ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:C2"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1780,
+        2440
+      ],
+      "id": "bf7c0a87-fc26-4d87-9281-c7e7b0a3f970",
+      "name": "Get row(s) in sheet7",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1340,
+        2540
+      ],
+      "id": "bb8ee97c-c5e3-4688-9ee1-3f32acc26ef7",
+      "name": "No Operation, do nothing6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "http://www.recycling-info.or.kr/sds/JsonApi.do",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "KEY",
+              "value": "AJMRTZWG6YUXQ4PQBFUGYGZE8YJTH3DYIK8BUKGUNAMBE"
+            },
+            {
+              "name": "PID",
+              "value": "NTN008"
+            },
+            {
+              "name": "USRID",
+              "value": "leesy7197"
+            },
+            {
+              "name": "YEAR",
+              "value": "={{ $('Split Out10').item.json.year }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2000,
+        3490
+      ],
+      "id": "1f217003-c283-483d-92c8-25b25bc58b88",
+      "name": "HTTP Request5",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "res = {\n  'year' : [2020, 2021, 2022, 2023, 2024, 2025]\n}\n\nreturn res"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2660,
+        3940
+      ],
+      "id": "563a9783-cff2-46ae-967a-068ca929eec5",
+      "name": "Code15",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "year",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        3940
+      ],
+      "id": "d2ebf323-a52e-4b25-9b4f-814bcbabdff1",
+      "name": "Split Out10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2220,
+        3940
+      ],
+      "id": "5f6f7ac9-3c90-4eeb-8835-f1be6d61eec0",
+      "name": "Loop Over Items6",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3904aca0-1062-4fa3-92ef-fe74d2ba0fb8",
+              "leftValue": "={{ $json.result[0].ERR_CODE }}",
+              "rightValue": "E000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1780,
+        3665
+      ],
+      "id": "4fe0fcb0-7bd8-4a76-8188-e7fb0abd1cbb",
+      "name": "If13",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69167a1b-5198-41c8-8604-1684ce1fb18e",
+              "name": "dataHeader",
+              "value": "={{ $('HTTP Request5').item.json.dataHeader }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1340,
+        3265
+      ],
+      "id": "7688a9b0-67a8-41e6-b8e1-2be9fcb8b924",
+      "name": "Edit Fields10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.dataHeader[0].YEAR = '기준연도'\nreturn item.json.dataHeader[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        3265
+      ],
+      "id": "c3b19ab0-583d-475c-9742-b0882a9bb8e3",
+      "name": "Code16",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0",
+          "mode": "list",
+          "cachedResultName": "NTN008 (시군구) 사업장비(非)배출시설계폐기물",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -900,
+        3265
+      ],
+      "id": "1b5834c6-608b-482a-979e-2878bd575cdb",
+      "name": "Append row in sheet10",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5481b0bc-88a7-4396-adfd-9b479aba3f0c",
+              "name": "data",
+              "value": "={{ $('If13').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1120,
+        3665
+      ],
+      "id": "12500dc5-f598-4aec-a600-a7dbbdf42db9",
+      "name": "Edit Fields11",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        3665
+      ],
+      "id": "40860521-39b7-4291-a250-9c15b4e91555",
+      "name": "Split Out11",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nitem.json.data.YEAR = _('HTTP Request5').first().json.result[0].YEAR\nreturn item.json.data"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        3665
+      ],
+      "id": "295f84a9-6e6b-49dd-9a4b-8a0a27ca9368",
+      "name": "Code17",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0",
+          "mode": "list",
+          "cachedResultName": "NTN008 (시군구) 사업장비(非)배출시설계폐기물",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -460,
+        3865
+      ],
+      "id": "56a56ee8-e8e3-44e2-81da-71bef8f69d63",
+      "name": "Append row in sheet11",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89575bb5-9750-4a3a-84a6-b8a1c0693f1d",
+              "leftValue": "={{ $('Get row(s) in sheet8').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1340,
+        3665
+      ],
+      "id": "b12a4bfe-2a72-4ea6-b530-38289ab67f6a",
+      "name": "If14",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0",
+          "mode": "list",
+          "cachedResultName": "NTN008 (시군구) 사업장비(非)배출시설계폐기물",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "YEAR",
+              "lookupValue": "={{ $json.result[0].YEAR }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1560,
+        3665
+      ],
+      "id": "1c3aa723-b52a-4113-b4aa-7e21e1f91619",
+      "name": "Get row(s) in sheet8",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        3765
+      ],
+      "id": "d429f385-62c0-413d-bc3a-1898a7208545",
+      "name": "No Operation, do nothing7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e8547acd-fdc6-4f4d-9be9-d81218738792",
+              "leftValue": "={{ $('Get row(s) in sheet9').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1560,
+        3365
+      ],
+      "id": "63aab71b-e4e9-4611-b71f-cf56a0198045",
+      "name": "If15",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0",
+          "mode": "list",
+          "cachedResultName": "NTN008 (시군구) 사업장비(非)배출시설계폐기물",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G16CfT2BMOxZMg37w5KerEod5pu9HEqryk6Am1GAai0/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:C2"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1780,
+        3365
+      ],
+      "id": "165beb7e-0b16-483e-ad05-b7b326132995",
+      "name": "Get row(s) in sheet9",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1340,
+        3465
+      ],
+      "id": "6dcd6f78-64a8-41b6-9706-58bd327bb4c1",
+      "name": "No Operation, do nothing8",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "http://www.recycling-info.or.kr/sds/JsonApi.do",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "KEY",
+              "value": "AJMRTZWG6YUXQ4PQBFUGYGZE8YJTH3DYIK8BUKGUNAMBE"
+            },
+            {
+              "name": "PID",
+              "value": "NTN018"
+            },
+            {
+              "name": "USRID",
+              "value": "leesy7197"
+            },
+            {
+              "name": "YEAR",
+              "value": "={{ $('Split Out12').item.json.year }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1900,
+        4720
+      ],
+      "id": "45a09c7a-c824-4dde-8b09-832332cd4060",
+      "name": "HTTP Request6",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "res = {\n  'year' : [2020, 2021, 2022, 2023, 2024, 2025]\n}\n\nreturn res"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2560,
+        5160
+      ],
+      "id": "0bef8572-eb84-4d7e-b33d-5301881869c4",
+      "name": "Code18",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "year",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2340,
+        5160
+      ],
+      "id": "f1d69d18-9c34-4755-af6e-885c9cb07e8d",
+      "name": "Split Out12",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2120,
+        5160
+      ],
+      "id": "c52352f6-68da-4056-b839-dac991b2c879",
+      "name": "Loop Over Items7",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3904aca0-1062-4fa3-92ef-fe74d2ba0fb8",
+              "leftValue": "={{ $json.result[0].ERR_CODE }}",
+              "rightValue": "E000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1680,
+        4880
+      ],
+      "id": "da9afe24-bd43-42d4-bd2a-c51096def54c",
+      "name": "If16",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69167a1b-5198-41c8-8604-1684ce1fb18e",
+              "name": "dataHeader",
+              "value": "={{ $('HTTP Request6').item.json.dataHeader }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1240,
+        4480
+      ],
+      "id": "da94a0fe-072f-4c7b-a758-3bfb578f4708",
+      "name": "Edit Fields12",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.dataHeader[0].YEAR = '기준연도'\nreturn item.json.dataHeader[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1020,
+        4480
+      ],
+      "id": "c3ab9301-328d-4cbe-aab7-410278061e35",
+      "name": "Code19",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE",
+          "mode": "list",
+          "cachedResultName": "NTN018 (시군구) 사업장배출시설계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -800,
+        4480
+      ],
+      "id": "741f75e6-a5aa-48bf-a1b6-292cf5d676d5",
+      "name": "Append row in sheet12",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5481b0bc-88a7-4396-adfd-9b479aba3f0c",
+              "name": "data",
+              "value": "={{ $('If16').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1020,
+        4880
+      ],
+      "id": "9f58b9a7-0bdc-4298-ae8f-a6677a34e075",
+      "name": "Edit Fields13",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        4880
+      ],
+      "id": "f0ae5328-5580-4b9c-bc1a-3c72e69005e8",
+      "name": "Split Out13",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nitem.json.data.YEAR = _('HTTP Request6').first().json.result[0].YEAR\nreturn item.json.data"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -580,
+        4880
+      ],
+      "id": "50166859-0b21-435a-a9d7-82c295123833",
+      "name": "Code20",
+      "executeOnce": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE",
+          "mode": "list",
+          "cachedResultName": "NTN018 (시군구) 사업장배출시설계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -360,
+        5080
+      ],
+      "id": "96159da4-fff2-4763-aa73-ea712cdb6730",
+      "name": "Append row in sheet13",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89575bb5-9750-4a3a-84a6-b8a1c0693f1d",
+              "leftValue": "={{ $('Get row(s) in sheet10').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1240,
+        4880
+      ],
+      "id": "c7d8f7de-5665-4451-aa55-a41e66d61f81",
+      "name": "If17",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE",
+          "mode": "list",
+          "cachedResultName": "NTN018 (시군구) 사업장배출시설계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MinnES5xg_iS1mYbpSrc-afuceJ7mpM1z_mxEEvH790/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "YEAR",
+              "lookupValue": "={{ $json.result[0].YEAR }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1460,
+        4880
+      ],
+      "id": "d113064a-e6a4-4480-913f-f6ab70478c13",
+      "name": "Get row(s) in sheet10",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1900,
+        4980
+      ],
+      "id": "eeab033b-7403-4a44-a403-6584aee55fb5",
+      "name": "No Operation, do nothing9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e8547acd-fdc6-4f4d-9be9-d81218738792",
+              "leftValue": "={{ $('Get row(s) in sheet11').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1460,
+        4580
+      ],
+      "id": "9a3d3e9d-bb1c-491a-ad68-c3b4cfb88042",
+      "name": "If18",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE",
+          "mode": "list",
+          "cachedResultName": "NTN018 (시군구) 사업장배출시설계폐기물 발생량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aoWHJiHqI0B9d3DxVRCWq5yHy_8vzKwmKX9MR_myurE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1680,
+        4580
+      ],
+      "id": "0862c11b-4a4e-44a6-944c-181e98ee319a",
+      "name": "Get row(s) in sheet11",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1240,
+        4680
+      ],
+      "id": "282d7ad5-1ece-430d-b325-515a6aada22f",
+      "name": "No Operation, do nothing10",
+      "disabled": true
+    }
+  ],
+  "pinData": {
+    "Code7": [
+      {
+        "json": {
+          "CITY_JIDT_CD_NM": "시도",
+          "CTS_JIDT_CD_NM": "시군구",
+          "TOT_PEOPLE": "총계_인원(명)",
+          "TOT_CAR": "총계_차량(대)",
+          "TOT_CART": "총계_손수레(대)",
+          "TOT_HEAVY": "총계_중장비(대)",
+          "PUB_PEOPLE": "공공처리_인원(명)",
+          "PUB_CAR": "공공처리_차량(대)",
+          "PUB_CART": "공공처리_손수레(대)",
+          "PUB_HEAVY": "공공처리_중장비(대)",
+          "SELF_PEOPLE": "자가처리_인원(명)",
+          "SELF_CAR": "자가처리_차량(대)",
+          "SELF_CART": "자가처리_손수레(대)",
+          "SELF_HEAVY": "자가처리_중장비(대)",
+          "COM_PEOPLE": "위탁처리_인원(명)",
+          "COM_CAR": "위탁처리_차량(대)",
+          "COM_CART": "위탁처리_손수레(대)",
+          "COM_HEAVY": "위탁처리_중장비(대)",
+          "YEAR": "기준연도"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code9",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code12",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code15",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Split Out4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Split Out5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out5": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code9": {
+      "main": [
+        [
+          {
+            "node": "Split Out6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Code10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code10": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "Split Out7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out7": {
+      "main": [
+        [
+          {
+            "node": "Code11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code11": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet5": {
+      "main": [
+        [
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code12": {
+      "main": [
+        [
+          {
+            "node": "Split Out8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields8": {
+      "main": [
+        [
+          {
+            "node": "Code13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code13": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields9": {
+      "main": [
+        [
+          {
+            "node": "Split Out9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out9": {
+      "main": [
+        [
+          {
+            "node": "Code14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code14": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet9": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If11": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet6": {
+      "main": [
+        [
+          {
+            "node": "If11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If12": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet7": {
+      "main": [
+        [
+          {
+            "node": "If12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "If13",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code15": {
+      "main": [
+        [
+          {
+            "node": "Split Out10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out10": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items6": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If13": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields10": {
+      "main": [
+        [
+          {
+            "node": "Code16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code16": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields11": {
+      "main": [
+        [
+          {
+            "node": "Split Out11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out11": {
+      "main": [
+        [
+          {
+            "node": "Code17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code17": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet11": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If14": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet8": {
+      "main": [
+        [
+          {
+            "node": "If14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If15": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet9": {
+      "main": [
+        [
+          {
+            "node": "If15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "If16",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code18": {
+      "main": [
+        [
+          {
+            "node": "Split Out12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out12": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items7": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If16": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields12": {
+      "main": [
+        [
+          {
+            "node": "Code19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code19": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields13": {
+      "main": [
+        [
+          {
+            "node": "Split Out13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out13": {
+      "main": [
+        [
+          {
+            "node": "Code20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code20": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet13": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If17": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields13",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet10": {
+      "main": [
+        [
+          {
+            "node": "If17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If18": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet11": {
+      "main": [
+        [
+          {
+            "node": "If18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9bfea328-2885-4962-a07e-1b11e6ee742c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "z0gUfGZNE2gGsFJg",
+  "tags": []
+}

@@ -1,0 +1,499 @@
+{
+  "name": "n8n_seoul_data_scraping",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        425
+      ],
+      "id": "cebf93fc-0d46-40f1-80c6-6ec970de8966",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        350
+      ],
+      "id": "f9b44480-7241-4cd9-a07c-170f7e0b1843",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "result = []\n\ngap = 1000\nfor i in range(1, 5001, gap):\n  start = i\n  end = i + (gap - 1)\n  url = f'http://openapi.seoul.go.kr:8088/47737777536c6565313037736c587a55/json/bikeList/{start}/{end}/'\n  result.append({'url':url})\n\nreturn result"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        425
+      ],
+      "id": "e75f4465-c730-4c8f-8850-f38f079b9814",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        140,
+        425
+      ],
+      "id": "9fd08a5a-78e1-4462-b8a5-c885a53b7d94",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        500
+      ],
+      "id": "0726884d-ad04-402b-84c9-5fc6f0c0db65",
+      "name": "Wait",
+      "webhookId": "2fcecbcb-6aa8-49e5-850c-7776fb6bc94a"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "50b11e4a-c7a8-4bf2-a5af-ca7e426e830b",
+              "leftValue": "={{ $json.rentBikeStatus.RESULT.CODE }}",
+              "rightValue": "I",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "fcfe397a-719c-4462-836b-9b686444bd96",
+              "leftValue": "={{ $json.rentBikeStatus.RESULT.CODE }}",
+              "rightValue": "INFO-000",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        150
+      ],
+      "id": "f2fed40d-7864-4339-8ec9-e44c4be1782a",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e8bbaee-8afd-469a-bc65-dcbe4d74ee07",
+              "name": "rentBikeStatus.row",
+              "value": "={{ $json.rentBikeStatus.row }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        580,
+        150
+      ],
+      "id": "f70c6a88-71ba-4232-ac67-b339662649d2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "rentBikeStatus.row",
+        "options": {
+          "destinationFieldName": ""
+        }
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        800,
+        150
+      ],
+      "id": "5d04a7b4-623f-4da0-be7f-6911a8e3ab3c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1sAmvzphcXxgMTs6P5Gx9pTvSrqD-bogyJCNHVDSMgak",
+          "mode": "list",
+          "cachedResultName": "서울시 공공자전거 실시간 대여정보",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sAmvzphcXxgMTs6P5Gx9pTvSrqD-bogyJCNHVDSMgak/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "실시간 데이터 수집",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sAmvzphcXxgMTs6P5Gx9pTvSrqD-bogyJCNHVDSMgak/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "stationId": "={{ $json.stationId }}",
+            "stationName": "={{ $json.stationName }}",
+            "stationLongitude": "={{ $json.stationLongitude }}",
+            "stationLatitude": "={{ $json.stationLatitude }}",
+            "shared": "={{ $json.shared }}",
+            "parkingBikeTotCnt": "={{ $json.parkingBikeTotCnt }}",
+            "datetime": "={{ $now.toDateTime().toFormat('yyyy-MM-dd HH:mm') }}",
+            "rackTotCnt": "={{ $json.rackTotCnt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "stationId",
+              "displayName": "stationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "stationName",
+              "displayName": "stationName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "stationLongitude",
+              "displayName": "stationLongitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "stationLatitude",
+              "displayName": "stationLatitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rackTotCnt",
+              "displayName": "rackTotCnt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "shared",
+              "displayName": "shared",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "parkingBikeTotCnt",
+              "displayName": "parkingBikeTotCnt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "datetime",
+              "displayName": "datetime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1240,
+        300
+      ],
+      "id": "e1478188-d0b1-490a-9ffa-d5f6a79e145f",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8123636831",
+        "text": "=서울시 공공자전거 실시간 대여정보 {{ $json.success.length }}개가 성공적으로 구글 시트에 업데이트 되었습니다. ",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1460,
+        100
+      ],
+      "id": "1b6c4bdc-8d2d-4790-ac92-12a47c300747",
+      "name": "Send a text message",
+      "webhookId": "3decd47c-a7f5-4b54-9aab-34220bd6241c",
+      "credentials": {
+        "telegramApi": {
+          "id": "iDYsysbbQ4q9DTCd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 500,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1020,
+        150
+      ],
+      "id": "9fd4d094-7386-4624-9a53-e4e981f5e0cb",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "stationId",
+              "renameField": true,
+              "outputFieldName": "success"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        100
+      ],
+      "id": "821400ca-627a-4680-a524-a3e2f7948a38",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ad16c37e-0cc3-4995-9051-8cc13db2c648",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "2uQ8QpZeJCiRlWB1",
+  "tags": []
+}

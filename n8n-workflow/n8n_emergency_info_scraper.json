@@ -1,0 +1,1561 @@
+{
+  "name": "n8n_emergency_info_scraper",
+  "nodes": [
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "query_options = {\n  \"stage1\" : \"서울특별시\",\n  \"stage2\" : \"서대문구\",\n  \"call_list\" : [\n    \"응급실 실시간 가용병상정보 조회\",\n    \"중증질환자 수용가능정보 조회\",\n    \"응급의료기관 목록정보 조회\",\n    \"응급의료기관 위치정보 조회\",\n    \"응급의료기관 기본정보 조회\",\n    \"외상센터 목록정보 조회\",\n    \"외상센터 위치정보 조회\",\n    \"외상센터 기본정보 조회\",\n    \"응급실 및 중증질환 메시지 조회\"\n]}\n\nreturn query_options\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        120,
+        140
+      ],
+      "id": "ff09458a-ecdc-47ef-96b1-02bd5b83caf7",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getSrsillDissAceptncPosblInfoInqire",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "STAGE1",
+              "value": "={{ $('Code').item.json.stage1 }}"
+            },
+            {
+              "name": "STAGE2",
+              "value": "="
+            },
+            {
+              "name": "pageNo",
+              "value": "1"
+            },
+            {
+              "name": "numOfRows",
+              "value": "10000"
+            },
+            {
+              "name": "serviceKey",
+              "value": "cPLQugxowiTcaL5X1V8w57M2oIC81icVyZgsZOIPcnzmk/8OJh5YYy1gCBwinLP4RnZF0Qa3Tz5xipbjITME8A=="
+            },
+            {
+              "name": "SM_TYPE"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        40
+      ],
+      "id": "b6bf5a1b-5498-4782-b9f7-b8b5583dece8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "691bd014-339f-4950-a5b0-340fbebd86eb",
+              "name": "item",
+              "value": "={{ $json.response.body.items.item }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        40
+      ],
+      "id": "791f4f20-7ee0-46f1-9ecf-715c662d5635",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "item",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        780,
+        40
+      ],
+      "id": "adf3f1ee-6d91-4666-b66d-5a1420af5cce",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        140
+      ],
+      "id": "7213e8e6-a33b-4ee7-80c2-35ab7c0927b2",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Add a new field called 'myNewField' to the JSON of the item\nmapping = _('Code2').all()\n\n# new_mapping = mapping[0].items()\nnew_mapping = {k.lower() : v for k, v in mapping[0].json.items()}\n\nfinal = {}\n\nfor key, value in item.json.items():\n    final[new_mapping[key.lower()]] = value\n  \nreturn final"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1220,
+        -60
+      ],
+      "id": "9a16e408-e114-4ad7-9b22-a12a15dc4beb",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8",
+          "mode": "list",
+          "cachedResultName": "중증질환자 수용가능정보 조회",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 662691813,
+          "mode": "list",
+          "cachedResultName": "컬럼 정보",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8/edit#gid=662691813"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        560,
+        -160
+      ],
+      "id": "c1edd672-ac74-4432-bcbe-be06220fc821",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "mapping = {}\n\nfor item in _input.all():\n  mapping[item.json['항목명 (영문)']] = item.json['항목명 (국문)']\nreturn mapping"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        -160
+      ],
+      "id": "6512c9e3-6464-40df-b06c-21bbe558e214",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1000,
+        -60
+      ],
+      "id": "64889ec4-b2f7-4015-9a19-f137361727b4",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8",
+          "mode": "list",
+          "cachedResultName": "중증질환자 수용가능정보 조회",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "실시간 데이터",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "기관ID"
+          ],
+          "schema": [
+            {
+              "id": "기관명",
+              "displayName": "기관명",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기관ID",
+              "displayName": "기관ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "재관류중재술_심근경색",
+              "displayName": "재관류중재술_심근경색",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "장중첩폐색_영유아",
+              "displayName": "장중첩폐색_영유아",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급내시경_성인_위장관",
+              "displayName": "응급내시경_성인_위장관",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급내시경_영유아_위장관",
+              "displayName": "응급내시경_영유아_위장관",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "위장관_응급내시경_영유아가능연령",
+              "displayName": "위장관_응급내시경_영유아가능연령",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급내시경_성인_기관지",
+              "displayName": "응급내시경_성인_기관지",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급내시경_영유아_기관지",
+              "displayName": "응급내시경_영유아_기관지",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기관지_응급내시경_영유아가능연령",
+              "displayName": "기관지_응급내시경_영유아가능연령",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "저체중출생아_집중치료",
+              "displayName": "저체중출생아_집중치료",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "저체중_출생아_가능연령",
+              "displayName": "저체중_출생아_가능연령",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "산부인과응급_분만",
+              "displayName": "산부인과응급_분만",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "산부인과응급_산과수술",
+              "displayName": "산부인과응급_산과수술",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "산부인과응급_부인과수술",
+              "displayName": "산부인과응급_부인과수술",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "중증화상전문치료",
+              "displayName": "중증화상전문치료",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "재관류중재술_뇌경색",
+              "displayName": "재관류중재술_뇌경색",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "사지접합_수족지접합",
+              "displayName": "사지접합_수족지접합",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "사지접합_수족지접합_외",
+              "displayName": "사지접합_수족지접합_외",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급투석_HD",
+              "displayName": "응급투석_HD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급투석_CRRT",
+              "displayName": "응급투석_CRRT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "정신과적응급_폐쇄병동입원",
+              "displayName": "정신과적응급_폐쇄병동입원",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "안과적수술_응급",
+              "displayName": "안과적수술_응급",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "영상의학혈관중재_성인",
+              "displayName": "영상의학혈관중재_성인",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "영상의학혈관중재_영유아",
+              "displayName": "영상의학혈관중재_영유아",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "영상의학_혈관_중재적_시술_영유아가능_연령",
+              "displayName": "영상의학_혈관_중재적_시술_영유아가능_연령",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급실",
+              "displayName": "응급실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "뇌출혈수술_거미막하출혈",
+              "displayName": "뇌출혈수술_거미막하출혈",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "뇌출혈수술_거미막하출혈_외",
+              "displayName": "뇌출혈수술_거미막하출혈_외",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "대동맥응급_흉부",
+              "displayName": "대동맥응급_흉부",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "대동맥응급_복부",
+              "displayName": "대동맥응급_복부",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "담낭담관질환_담낭질환",
+              "displayName": "담낭담관질환_담낭질환",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "담낭담관질환_담도포함질환",
+              "displayName": "담낭담관질환_담도포함질환",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "복부응급수술_비외상",
+              "displayName": "복부응급수술_비외상",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "장중첩폐색_영유아가능연령",
+              "displayName": "장중첩폐색_영유아가능연령",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1440,
+        -60
+      ],
+      "id": "f9ec0407-fc85-4957-bb65-59678533cb90",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytBassInfoInqire",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "serviceKey",
+              "value": "cPLQugxowiTcaL5X1V8w57M2oIC81icVyZgsZOIPcnzmk/8OJh5YYy1gCBwinLP4RnZF0Qa3Tz5xipbjITME8A=="
+            },
+            {
+              "name": "HPID",
+              "value": "={{ $json[\"기관ID\"] }}"
+            },
+            {
+              "name": "pageNo",
+              "value": "1"
+            },
+            {
+              "name": "numofRows",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        440
+      ],
+      "id": "628ed4ec-7dd5-4ea6-9b1a-103d97e294a7",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "67dd728f-2e7e-4f63-b7d2-dc4fde41facc",
+              "name": "item",
+              "value": "={{ $json.response.body.items.item }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        440
+      ],
+      "id": "bf2b3f70-fe19-4ae2-bf24-ff7a0b6ff278",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "# Add a new field called 'myNewField' to the JSON of the item\nmapping = _('Code4').all()\n\n# new_mapping = mapping[0].items()\nnew_mapping = {k.lower() : v for k, v in mapping[0].json.items()}\n\nfinal = {}\n\nfor key, value in item.json.item.items():\n  if key.startswith('dutyTime'):\n    final[new_mapping[key.lower()]] = str(value)\n  else:\n    final[new_mapping[key.lower()]] = (value.strip() if type(value) == 'str' else value)\nreturn final"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        340
+      ],
+      "id": "1d0306dc-439e-43bf-aec3-fbc9b0e574a1",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8",
+          "mode": "list",
+          "cachedResultName": "중증질환자 수용가능정보 조회",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "실시간 데이터",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rvS-eD3nKBJfyq3fSKnuyaZWkhhrPL_OOHyjGU_oOn8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        340,
+        440
+      ],
+      "id": "1a300a02-4e28-4c1a-a7eb-302e2859078d",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "10MGJEJ_kkTFX10LrHMs2D0HU7vORWfCn8v7x58x1QkE",
+          "mode": "list",
+          "cachedResultName": "응급의료기관 기본정보 조회",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10MGJEJ_kkTFX10LrHMs2D0HU7vORWfCn8v7x58x1QkE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "실시간 데이터",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10MGJEJ_kkTFX10LrHMs2D0HU7vORWfCn8v7x58x1QkE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "기관ID"
+          ],
+          "schema": [
+            {
+              "id": "진료과목",
+              "displayName": "진료과목",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "주소",
+              "displayName": "주소",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급실 운영여부(1/2)",
+              "displayName": "응급실 운영여부(1/2)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "병상수",
+              "displayName": "병상수",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "입원실 가용여부(1/2)",
+              "displayName": "입원실 가용여부(1/2)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기관설명상세",
+              "displayName": "기관설명상세",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "간이약도",
+              "displayName": "간이약도",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기관명",
+              "displayName": "기관명",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "대표전화1",
+              "displayName": "대표전화1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급실전화",
+              "displayName": "응급실전화",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 월요일(C)",
+              "displayName": "진료시간 월요일(C)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 월요일(S)",
+              "displayName": "진료시간 월요일(S)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 화요일(C)",
+              "displayName": "진료시간 화요일(C)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 화요일(S)",
+              "displayName": "진료시간 화요일(S)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 수요일(C)",
+              "displayName": "진료시간 수요일(C)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 수요일(S)",
+              "displayName": "진료시간 수요일(S)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 목요일(C)",
+              "displayName": "진료시간 목요일(C)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 목요일(S)",
+              "displayName": "진료시간 목요일(S)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 금요일(C)",
+              "displayName": "진료시간 금요일(C)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 금요일(S)",
+              "displayName": "진료시간 금요일(S)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 토요일(C)",
+              "displayName": "진료시간 토요일(C)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 토요일(S)",
+              "displayName": "진료시간 토요일(S)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급실",
+              "displayName": "응급실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "입원실",
+              "displayName": "입원실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "일반중환자실",
+              "displayName": "일반중환자실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기관ID",
+              "displayName": "기관ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "신생아중환자실",
+              "displayName": "신생아중환자실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "수술실",
+              "displayName": "수술실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "일반중환자",
+              "displayName": "일반중환자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "신생중환자",
+              "displayName": "신생중환자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "뇌출혈수술",
+              "displayName": "뇌출혈수술",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "중증화상",
+              "displayName": "중증화상",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "뇌경색의재관류",
+              "displayName": "뇌경색의재관류",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급실 (Emergency gate keeper)",
+              "displayName": "응급실 (Emergency gate keeper)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "심근경색의재관류",
+              "displayName": "심근경색의재관류",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "복부손상의수술",
+              "displayName": "복부손상의수술",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "사지접합의수술",
+              "displayName": "사지접합의수술",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급내시경",
+              "displayName": "응급내시경",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "응급투석",
+              "displayName": "응급투석",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "조산산모",
+              "displayName": "조산산모",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "정신질환자",
+              "displayName": "정신질환자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "우편번호1",
+              "displayName": "우편번호1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "우편번호2",
+              "displayName": "우편번호2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "병원위도",
+              "displayName": "병원위도",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "병원경도",
+              "displayName": "병원경도",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "흉부중환자실",
+              "displayName": "흉부중환자실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "흉부중환자",
+              "displayName": "흉부중환자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "신생아",
+              "displayName": "신생아",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 일요일(C)",
+              "displayName": "진료시간 일요일(C)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "진료시간 일요일(S)",
+              "displayName": "진료시간 일요일(S)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "신경중환자실",
+              "displayName": "신경중환자실",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "신경중환자",
+              "displayName": "신경중환자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1660,
+        340
+      ],
+      "id": "6fc84ace-58ef-49b7-b52c-b2f46944bd95",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5bada675-390a-4f1a-b713-3f81befd2539",
+              "name": "기관ID",
+              "value": "={{ $json[\"기관ID\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        440
+      ],
+      "id": "f0f3c8ca-cfa2-4be6-aad6-eaaa4730c012",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10MGJEJ_kkTFX10LrHMs2D0HU7vORWfCn8v7x58x1QkE",
+          "mode": "list",
+          "cachedResultName": "응급의료기관 기본정보 조회",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10MGJEJ_kkTFX10LrHMs2D0HU7vORWfCn8v7x58x1QkE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1001965535,
+          "mode": "list",
+          "cachedResultName": "컬럼 정보",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10MGJEJ_kkTFX10LrHMs2D0HU7vORWfCn8v7x58x1QkE/edit#gid=1001965535"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        780,
+        240
+      ],
+      "id": "e9eb519a-28c5-448a-bf59-97afbe524043",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VGSfBsuQBvu2iTVJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "mapping = {}\n\nfor item in _input.all():\n  mapping[item.json['항목명 영문']] = item.json['항목명 국문']\nreturn mapping"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        240
+      ],
+      "id": "948d0e75-1f7f-44e5-8f9e-fb55a5805caa",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1220,
+        340
+      ],
+      "id": "c7447cc8-aee3-436f-8d12-bf2548014439",
+      "name": "Merge1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5b664720-8bc4-438a-aacb-7150710501f2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "vCEFz3MxttZssz0p",
+  "tags": []
+}
