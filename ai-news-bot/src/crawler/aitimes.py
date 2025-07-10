@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from urllib.parse import urljoin
 
+import re
 import requests
 from bs4 import BeautifulSoup
 from pydantic import BaseModel
@@ -159,20 +160,29 @@ class AITimesCrawler:
                 return None
                 
             # 제목 추출
-            title = soup.select_one('#articleViewCon > article > header > h3')
+            # title = soup.select_one('#articleViewCon > article > header > h3')
+            title = soup.select_one('#article-view > div > div > header > h1') # 바뀐 HTML (250709)
             if not title:
                 logger.warning(f"[Title] Could not find article title at {url}")
                 return None
             title = title.get_text(strip=True)
             
             # 날짜 추출
-            date_element = soup.select_one('i.icon-clock-o')
+            # date_element = soup.select_one('i.icon-clock-o')
+            date_element = soup.select_one('#article-view > div > div > header > div > article > ul').text
+
             if not date_element:
                 logger.warning(f"[Date] Could not find article date at {url}")
                 return None
             
             # 부모 li 태그에서 텍스트 추출하고 "입력 " 제거
-            date_str = date_element.parent.get_text(strip=True).replace('입력 ', '')
+            # date_str = date_element.parent.get_text(strip=True).replace('입력 ', '')
+            m = re.search(r'입력\s*([0-9.\s:]+)\s*댓글', date_element)
+            if m:
+                date_str = m.group(1).strip()
+                print(date_str)
+            else:
+                print("날짜를 찾을 수 없습니다.")
             logger.info(f'###### 파싱된 날짜 {date_str} ######')
             published_at = self._parse_date(date_str)
             
@@ -218,7 +228,8 @@ class AITimesCrawler:
         saved_articles = []
         try:
             soup = self._get_soup(self.NEWS_LIST_URL)
-            article_links = soup.select('h4.titles > a')
+            # article_links = soup.select('h4.titles > a') # 이전 HTML
+            article_links = soup.select('#section-list > ul > li > a') # 바뀐 HTML 기반 (250709)            
             logger.info(f"[크롤러] 기사 링크 개수: {len(article_links)}")
             for link in article_links[:max_articles]:
                 article_url = urljoin(self.BASE_URL, link.get('href'))

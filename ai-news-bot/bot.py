@@ -232,7 +232,7 @@ async def news_command(update: Update, context: ContextTypes.DEFAULT_TYPE, page:
         user_id = str(update.effective_user.id)
         if do_crawl:
             # 최초 /news 명령어에서만 크롤링
-            new_articles = crawler.crawl_and_save_latest_news(max_articles=50)
+            new_articles = crawler.crawl_and_save_latest_news(max_articles=10) # 50)
             logger.info(f"실시간 크롤링: {len(new_articles)}개 새 기사 저장")
         # DB에서 기사 목록만 페이징
         articles = await get_user_news(user_id)
