@@ -15,6 +15,8 @@ from .nodes.retriever_nodes import ArticleSearchNode, AllSearchNode, WebSearchNo
 from .nodes.evaluator_nodes import ContextSufficiencyEvaluator
 from .nodes.generator_nodes import AnswerGenerator
 from .utils.vectorstore_utils import create_vectorstores, build_ensemble_retriever
+from .nodes.clarification_node import ClarificationNode
+from .nodes.recommend_node import RecommendArticlesNode
 
 
 def build_agentic_rag_graph(ensemble_retriever, article_id=None):
@@ -30,24 +32,29 @@ def build_agentic_rag_graph(ensemble_retriever, article_id=None):
     """
     
     # 노드 인스턴스 생성
+    clarification_node = ClarificationNode()
     article_search_node = ArticleSearchNode(ensemble_retriever)
     all_search_node = AllSearchNode(ensemble_retriever)
     web_search_node = WebSearchNode()
     context_evaluator = ContextSufficiencyEvaluator()
     answer_generator = AnswerGenerator()
+    recommend_node = RecommendArticlesNode()
     
     # 그래프 생성
     workflow = StateGraph(dict)
     
     # 노드 등록
+    workflow.add_node("clarification", clarification_node)
     workflow.add_node("article_search", article_search_node)
     workflow.add_node("all_search", all_search_node)
     workflow.add_node("web_search", web_search_node)
     workflow.add_node("context_evaluator", context_evaluator)
     workflow.add_node("generate_answer", answer_generator)
+    workflow.add_node("recommend_articles", recommend_node)
     
     # 엣지 연결
-    workflow.add_edge(START, "article_search")
+    workflow.add_edge(START, "clarification")
+    workflow.add_edge("clarification", "article_search")
     
     # article_search 후 분기
     workflow.add_conditional_edges(
@@ -71,7 +78,9 @@ def build_agentic_rag_graph(ensemble_retriever, article_id=None):
     
     # web_search는 항상 generate_answer로
     workflow.add_edge("web_search", "generate_answer")
-    workflow.add_edge("generate_answer", END)
+    # 답변 생성 후 추천 기사 노드로
+    workflow.add_edge("generate_answer", "recommend_articles")
+    workflow.add_edge("recommend_articles", END)
     
     # 컴파일
     return workflow.compile()

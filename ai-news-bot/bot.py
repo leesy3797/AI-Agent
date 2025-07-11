@@ -133,7 +133,7 @@ def build_ensemble_retriever(faiss_vectorstore, bm25_retriever):
     from langchain.retrievers.ensemble import EnsembleRetriever
     return EnsembleRetriever(
         retrievers=[faiss_retriever, bm25_retriever],
-        weights=[0.6, 0.4]  # FAISS에 더 높은 가중치
+        weights=[0.3, 0.7]  # FAISS에 더 높은 가중치
     )
 
 # embedding_model은 한 번만 생성해서 재사용
@@ -184,7 +184,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """도움말을 보여줍니다."""
     help_text = (
-        "�� AI 뉴스 봇 사용 방법\n\n"
+        "🤖 AI 뉴스 봇 사용 방법\n\n"
         "1. /news - 최신 AI 뉴스 목록을 보여줍니다.\n"
         "2. 뉴스 제목을 클릭하면 요약을 볼 수 있습니다.\n"
         "3. 요약 후 '이 기사로 대화하기'를 선택하면 AI와 대화할 수 있습니다.\n\n"

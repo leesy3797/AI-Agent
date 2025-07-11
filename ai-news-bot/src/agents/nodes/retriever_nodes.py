@@ -36,11 +36,11 @@ class ArticleSearchNode(BaseRetrieverNode):
         article_docs = [doc for doc in all_docs if doc.metadata.get("article_id") == article_id]
         
         if article_docs:
-            # 해당 기사만으로 임시 retriever 생성
             faiss_vectorstore, bm25_retriever = create_vectorstores(article_docs, faiss_retriever.vectorstore.embedding_function)
             temp_ensemble = build_ensemble_retriever(faiss_vectorstore, bm25_retriever)
+            # 항상 앙상블 리트리버 사용
             context = temp_ensemble.invoke(user_question)
-            print(f"[article_search_node] 특정 기사에서 {len(context)}개 문서 검색됨")
+            print(f"[article_search_node] 앙상블 리트리버로 {len(context)}개 문서 반환")
             return context
         else:
             print(f"[article_search_node] 해당 기사를 찾을 수 없음: {article_id}")
@@ -57,9 +57,21 @@ class AllSearchNode(BaseRetrieverNode):
     def retrieve(self, state: Dict[str, Any]) -> List[Document]:
         """전체 기사에서 검색 수행"""
         user_question = self._get_user_question(state)
-        context = self.ensemble_retriever.invoke(user_question)
-        print(f"[all_search_node] 전체 기사에서 {len(context)}개 문서 검색됨")
-        return context
+        # 질의 길이에 따라 가중치 조정
+        if len(user_question.strip()) < 15:
+            context = self.ensemble_retriever.retrievers[1].get_relevant_documents(user_question)  # BM25
+        else:
+            context = self.ensemble_retriever.retrievers[0].similarity_search(user_question)  # semantic
+        # 두 결과 합치기 (중복 제거)
+        doc_ids = set()
+        merged = []
+        for doc in context:
+            doc_id = getattr(doc, 'metadata', {}).get('doc_id', id(doc))
+            if doc_id not in doc_ids:
+                merged.append(doc)
+                doc_ids.add(doc_id)
+        print(f"[all_search_node] 최종 {len(merged)}개 문서 반환")
+        return merged
 
 
 class WebSearchNode(BaseRetrieverNode):

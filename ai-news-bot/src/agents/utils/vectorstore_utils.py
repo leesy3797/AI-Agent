@@ -23,23 +23,30 @@ def create_vectorstores(documents: List[Document], embedding_model):
     Returns:
         tuple: (faiss_vectorstore, bm25_retriever)
     """
-    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        chunk_size=800,  # 더 작은 청크로 분할
-        chunk_overlap=150,
-        model_name="gpt-4"
-    )
-    
-    chunked_documents = []
+    improved_chunks = []
     for doc in documents:
-        chunked = text_splitter.split_documents([doc])
-        chunked_documents.extend(chunked)
+        text = doc.page_content if hasattr(doc, 'page_content') else str(doc)
+        meta = getattr(doc, 'metadata', {})
+        # 문단 단위로 우선 분할
+        for para in text.split('\n\n'):
+            para = para.strip()
+            if not para:
+                continue
+            # 너무 긴 문단은 문장 단위로 추가 분할
+            if len(para) > 500:
+                for sent in para.split('. '):
+                    sent = sent.strip()
+                    if sent:
+                        improved_chunks.append(Document(page_content=sent, metadata=meta))
+            else:
+                improved_chunks.append(Document(page_content=para, metadata=meta))
     
     faiss_vectorstore = FAISS.from_documents(
-        documents=chunked_documents,
+        documents=improved_chunks,
         embedding=embedding_model
     )
     
-    bm25_retriever = BM25Retriever.from_documents(chunked_documents)
+    bm25_retriever = BM25Retriever.from_documents(improved_chunks)
     
     return faiss_vectorstore, bm25_retriever
 
@@ -63,5 +70,5 @@ def build_ensemble_retriever(faiss_vectorstore, bm25_retriever):
     
     return EnsembleRetriever(
         retrievers=[faiss_retriever, bm25_retriever],
-        weights=[0.6, 0.4]  # FAISS에 더 높은 가중치
+        weights=[0.3, 0.7]  # FAISS 30%, BM25 70%
     ) 

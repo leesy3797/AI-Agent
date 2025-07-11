@@ -31,6 +31,18 @@ class AnswerGenerator(BaseGeneratorNode):
         print(f"[answer_generator] context_text 미리보기: {context_text[:100]} ...")
         print(f"[answer_generator] user_question: {user_question}")
         
+        # 출처 정보 추출 (중복 제거)
+        sources = set()
+        for doc in context:
+            meta = getattr(doc, 'metadata', {})
+            title = meta.get('title', '')
+            date = meta.get('date', '')
+            url = meta.get('url', '')
+            if title or url:
+                # 출처의 고유성을 title, date, url로 판단하여 set에 추가
+                sources.add(f"- {title} {url}")
+        sources_text = '\n'.join(sorted(sources))
+        
         # 컨텍스트가 없는 경우 처리
         if not context_text.strip() or len(context_text.strip()) < 50:
             prompt = f"""
@@ -52,8 +64,11 @@ class AnswerGenerator(BaseGeneratorNode):
 답변 시 다음 지침을 따라주세요:
 1. 참고 내용에 있는 정보만을 사용하여 답변하세요
 2. 확실하지 않은 정보는 언급하지 마세요
-3. 필요하다면 이모지를 사용해서 항목을 구분해주세요
-4. 마크다운 문법(*, -, #)은 사용하지 마세요
+3. 필요하다면 이모지를 사용해서 항목을 구분해 주세요
+4. 답변 마지막에 아래와 같이 참고 기사 출처를 명시하세요:
+
+[참고 기사 출처]
+{sources_text}
 """
         
         print(f"[answer_generator] LLM 프롬프트 미리보기: {prompt[:100]} ...")

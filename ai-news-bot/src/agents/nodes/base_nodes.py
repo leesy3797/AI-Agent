@@ -145,4 +145,17 @@ class BaseGeneratorNode(ABC):
         for msg in reversed(state["messages"]):
             if getattr(msg, "type", None) == "human":
                 return msg.content
-        raise ValueError("user 메시지가 없습니다.") 
+        raise ValueError("user 메시지가 없습니다.")
+
+
+class BaseClarificationNode:
+    def __init__(self, name="clarification"):
+        self.name = name
+    def clarify(self, state):
+        raise NotImplementedError
+
+class BaseRecommendNode:
+    def __init__(self, name="recommend_articles"):
+        self.name = name
+    def recommend(self, state):
+        raise NotImplementedError 
