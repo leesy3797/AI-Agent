@@ -3,6 +3,7 @@ self-hosted-ai-starter-kit/
 home.html
 telegram/
 
+industry-report/
 .venv/
 .env
 langgraph/
