@@ -18,7 +18,7 @@
       "type": "n8n-nodes-base.youTube",
       "position": [
         1340,
-        -135
+        55
       ],
       "typeVersion": 1,
       "credentials": {
@@ -45,7 +45,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "position": [
         -420,
-        -235
+        -45
       ],
       "typeVersion": 1.2
     },
@@ -88,7 +88,7 @@
       "type": "n8n-nodes-base.if",
       "position": [
         1560,
-        -135
+        55
       ],
       "notesInFlow": false,
       "typeVersion": 2,
@@ -106,7 +106,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         -480,
-        -535
+        -345
       ],
       "typeVersion": 1
     },
@@ -122,7 +122,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         -260,
-        -435
+        -245
       ],
       "typeVersion": 1
     },
@@ -138,7 +138,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         840,
-        -255
+        -65
       ],
       "typeVersion": 1
     },
@@ -154,7 +154,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         1290,
-        -255
+        -65
       ],
       "typeVersion": 1
     },
@@ -169,8 +169,8 @@
       "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        2060,
-        -800
+        1320,
+        -840
       ],
       "typeVersion": 1
     },
@@ -184,7 +184,7 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "position": [
         900,
-        -135
+        55
       ],
       "typeVersion": 1.1,
       "notes": "YouTube provides an RSS feed for each channel with the 15 latest videos.\nWe use this instead of the YouTube Data v3 API, as search requests cost a lot of \"quota points\" and would easily put us over the daily limit with just one workflow run."
@@ -233,7 +233,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [
         -200,
-        -235
+        -45
       ],
       "notesInFlow": true,
       "typeVersion": 4.2,
@@ -275,7 +275,7 @@
       "type": "n8n-nodes-base.if",
       "position": [
         20,
-        -235
+        -45
       ],
       "typeVersion": 2.2
     },
@@ -308,7 +308,7 @@
       "type": "n8n-nodes-base.filter",
       "position": [
         460,
-        -135
+        55
       ],
       "typeVersion": 2.2,
       "notes": "It's not a perfect indicator for new videos but helps reduce the amount of channels to process."
@@ -342,7 +342,7 @@
       "type": "n8n-nodes-base.filter",
       "position": [
         1120,
-        -135
+        55
       ],
       "typeVersion": 2.2,
       "notes": "We dynamically figure out the last run's execution time through the settings of the \"Schedule Trigger\" node."
@@ -356,7 +356,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "position": [
         240,
-        -335
+        -145
       ],
       "typeVersion": 1
     },
@@ -370,7 +370,7 @@
       "type": "n8n-nodes-base.splitOut",
       "position": [
         240,
-        -135
+        55
       ],
       "typeVersion": 1
     },
@@ -385,7 +385,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         620,
-        -335
+        -145
       ],
       "typeVersion": 1
     },
@@ -419,7 +419,7 @@
       "type": "n8n-nodes-base.filter",
       "position": [
         680,
-        -135
+        55
       ],
       "notesInFlow": true,
       "typeVersion": 2.2,
@@ -447,7 +447,7 @@
       "typeVersion": 4.2,
       "position": [
         1780,
-        -285
+        -145
       ],
       "id": "8f6f0130-74f6-4e99-a83f-1ddd166ba105",
       "name": "Get Youtube Transcripts",
@@ -468,7 +468,7 @@
       "typeVersion": 2,
       "position": [
         2000,
-        -285
+        -145
       ],
       "id": "0370c5f1-b178-459d-84cc-d21f6c5c70d4",
       "name": "Code"
@@ -489,7 +489,7 @@
       "typeVersion": 2.1,
       "position": [
         3100,
-        -760
+        -620
       ],
       "id": "21f175a0-a892-418f-a9ae-6617c98d1c78",
       "name": "Summarization Chain"
@@ -503,7 +503,7 @@
       "typeVersion": 1,
       "position": [
         3128,
-        -540
+        -400
       ],
       "id": "dbc9232c-175f-4297-9103-b27bacbbf38e",
       "name": "Google Gemini Chat Model",
@@ -520,7 +520,7 @@
       "typeVersion": 1,
       "position": [
         1780,
-        15
+        155
       ],
       "id": "2cf59fc9-757c-4574-980e-4e1f45bea7b2",
       "name": "No Operation, do nothing"
@@ -531,7 +531,7 @@
       "typeVersion": 1,
       "position": [
         3248,
-        -540
+        -400
       ],
       "id": "5d0dd415-746c-4328-a64c-168574297bca",
       "name": "Token Splitter"
@@ -546,11 +546,24 @@
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
-          "value": {},
+          "value": {
+            "transcripts": "={{ $json.transcripts }}"
+          },
           "matchingColumns": [
             "transcripts"
           ],
-          "schema": [],
+          "schema": [
+            {
+              "id": "transcripts",
+              "displayName": "transcripts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
           "attemptToConvertTypes": false,
           "convertFieldsToString": true
         },
@@ -560,103 +573,12 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        3696,
-        -360
+        3476,
+        -20
       ],
       "id": "b2995d71-ff9b-40b2-9660-f31513a055f1",
       "name": "Execute Workflow",
       "alwaysOutputData": false
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "schema": {
-          "__rl": true,
-          "mode": "list",
-          "value": "public"
-        },
-        "table": {
-          "__rl": true,
-          "value": "youtube_scripts",
-          "mode": "list",
-          "cachedResultName": "youtube_scripts"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "is_vectorized": true,
-            "id": "={{ $json.id }}"
-          },
-          "matchingColumns": [
-            "id"
-          ],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": true,
-              "defaultMatch": true,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "channeltitle",
-              "displayName": "channeltitle",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "title",
-              "displayName": "title",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "is_vectorized",
-              "displayName": "is_vectorized",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "transcripts",
-              "displayName": "transcripts",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        3916,
-        -310
-      ],
-      "id": "a527cc4e-0db2-46d6-b007-fd72b36f91d3",
-      "name": "Postgres3",
-      "credentials": {
-        "postgres": {
-          "id": "zzr7gmvUCrOHnErv",
-          "name": "Postgres account"
-        }
-      }
     },
     {
       "parameters": {
@@ -668,7 +590,7 @@
       "typeVersion": 3.2,
       "position": [
         2220,
-        -210
+        -20
       ],
       "id": "710dab8e-a848-463a-b755-d5c1870a7946",
       "name": "Merge"
@@ -702,7 +624,7 @@
       "typeVersion": 2.2,
       "position": [
         2440,
-        -210
+        -20
       ],
       "id": "2bcf9b06-0840-4a4b-8f5f-ca2aa6693484",
       "name": "If"
@@ -719,7 +641,7 @@
       "typeVersion": 1.2,
       "position": [
         2660,
-        -40
+        180
       ],
       "id": "cc0516e0-6842-437f-a3c7-9910119731ff",
       "name": "Send a text message",
@@ -817,7 +739,7 @@
       "typeVersion": 2.6,
       "position": [
         2660,
-        -235
+        -20
       ],
       "id": "3f7a3df5-1f88-4e53-bfd3-8d524439fb22",
       "name": "Insert rows in a table",
@@ -835,11 +757,12 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        3476,
-        -235
+        3178,
+        -20
       ],
       "id": "a2b3c9f0-de62-49b0-86a8-e1744d5b6f47",
-      "name": "Loop Over Items"
+      "name": "Loop Over Items",
+      "executeOnce": true
     },
     {
       "parameters": {
@@ -857,13 +780,21 @@
           "cachedResultName": "youtube_scripts"
         },
         "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "is_vectorized",
+              "value": "false"
+            }
+          ]
+        },
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
         2880,
-        -235
+        -20
       ],
       "id": "4a13aec2-91d5-4b34-995d-246ca3e851ed",
       "name": "Select rows from a table",
@@ -876,47 +807,13 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "69bdafc4-82c3-4aa7-ab79-9fe1098dd205",
-              "leftValue": "={{ $json.is_vectorized }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "false",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        3178,
-        -235
-      ],
-      "id": "e8aefcdd-39c8-4300-b587-4f3f12a27219",
-      "name": "If1"
-    },
-    {
-      "parameters": {
-        "amount": 60
+        "amount": 10
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
         4136,
-        -235
+        55
       ],
       "id": "ece31a55-a22b-453b-b695-63934187230f",
       "name": "Wait",
@@ -930,7 +827,7 @@
       "typeVersion": 3,
       "position": [
         2660,
-        -680
+        -620
       ],
       "id": "536e5629-4a0f-4c0b-81ae-ba78be7a2868",
       "name": "Loop Over Items1"
@@ -943,7 +840,7 @@
       "typeVersion": 1.1,
       "position": [
         3696,
-        -685
+        -520
       ],
       "id": "1e704c96-af1c-407d-9149-2c5b87fd9b36",
       "name": "Wait1",
@@ -962,7 +859,7 @@
       "typeVersion": 1.2,
       "position": [
         3476,
-        -760
+        -620
       ],
       "id": "68874bac-de16-4c01-a371-6f5ff3eec3f7",
       "name": "Send a text message1",
@@ -992,10 +889,152 @@
       "typeVersion": 3.4,
       "position": [
         2880,
-        -760
+        -620
       ],
       "id": "d8171bd1-e902-450b-83d0-4a20ce7964f4",
       "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "youtube_scripts",
+          "mode": "list",
+          "cachedResultName": "youtube_scripts"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_vectorized": true,
+            "id": "={{ $('Loop Over Items').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "channeltitle",
+              "displayName": "channeltitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "is_vectorized",
+              "displayName": "is_vectorized",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "transcripts",
+              "displayName": "transcripts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3916,
+        -20
+      ],
+      "id": "a527cc4e-0db2-46d6-b007-fd72b36f91d3",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "zzr7gmvUCrOHnErv",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8123636831",
+        "text": "=🎯모든 유튜브 영상이 VectorDB에 저장되었습니다.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3476,
+        -220
+      ],
+      "id": "2bde10d1-f0b3-4cb9-9d60-40d0eead1e99",
+      "name": "Send a text message2",
+      "webhookId": "e8417114-30b6-4168-a4f3-f053ad6fc048",
+      "credentials": {
+        "telegramApi": {
+          "id": "iDYsysbbQ4q9DTCd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        -820
+      ],
+      "id": "ed2e9175-9568-4fe9-8189-612214bbc9d5",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "specifiedFields",
+        "fieldsToInclude": "metadata.source",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3696,
+        -20
+      ],
+      "id": "056e71b7-9e2b-4425-b084-402ad210a3d2",
+      "name": "Aggregate"
     }
   ],
   "pinData": {},
@@ -1188,7 +1227,7 @@
       "main": [
         [
           {
-            "node": "Postgres3",
+            "node": "Aggregate",
             "type": "main",
             "index": 0
           }
@@ -1242,26 +1281,16 @@
     },
     "Loop Over Items": {
       "main": [
-        [],
         [
           {
-            "node": "Execute Workflow",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Postgres3",
+            "node": "Send a text message2",
             "type": "main",
             "index": 0
           }
-        ]
-      ]
-    },
-    "Postgres3": {
-      "main": [
+        ],
         [
           {
-            "node": "Wait",
+            "node": "Execute Workflow",
             "type": "main",
             "index": 0
           }
@@ -1269,17 +1298,6 @@
       ]
     },
     "Select rows from a table": {
-      "main": [
-        [
-          {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If1": {
       "main": [
         [
           {
@@ -1303,7 +1321,13 @@
     },
     "Loop Over Items1": {
       "main": [
-        [],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Edit Fields",
@@ -1345,13 +1369,35 @@
           }
         ]
       ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "42b98145-41ea-43b7-8529-8ffac67c862d",
+  "versionId": "ebf32cc3-d0f9-4be2-818d-33acf12c5a00",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"

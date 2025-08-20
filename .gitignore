@@ -7,3 +7,5 @@ industry-report/
 .venv/
 .env
 langgraph/
+hankook-colmar/
+langgraph-tutorial/

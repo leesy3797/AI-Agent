@@ -3,6 +3,26 @@
   "nodes": [
     {
       "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        320
+      ],
+      "id": "e6b9bbbf-12ca-4339-a8ab-3936e83a6118",
+      "name": "20분마다 실행"
+    },
+    {
+      "parameters": {
         "language": "python",
         "pythonCode": "query_options = {\n  \"stage1\" : \"서울특별시\",\n  \"stage2\" : \"서대문구\",\n  \"call_list\" : [\n    \"응급실 실시간 가용병상정보 조회\",\n    \"중증질환자 수용가능정보 조회\",\n    \"응급의료기관 목록정보 조회\",\n    # \"응급의료기관 위치정보 조회\",\n    \"응급의료기관 기본정보 조회\",\n    \"외상센터 목록정보 조회\",\n    \"외상센터 위치정보 조회\",\n    \"외상센터 기본정보 조회\",\n    # \"응급실 및 중증질환 메시지 조회\"\n]}\n\nreturn query_options\n"
       },
@@ -10,10 +30,10 @@
       "typeVersion": 2,
       "position": [
         -140,
-        240
+        320
       ],
       "id": "5c6af498-a803-472f-9399-418ce90d1906",
-      "name": "Code"
+      "name": "초기 설정값 정의"
     },
     {
       "parameters": {
@@ -24,32 +44,10 @@
       "typeVersion": 1,
       "position": [
         80,
-        240
+        320
       ],
       "id": "2371987b-ef0e-4cd3-863d-2daf2860affe",
-      "name": "Split Out"
-    },
-    {
-      "parameters": {
-        "resource": "spreadsheet",
-        "title": "={{ $json.call_list }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.6,
-      "position": [
-        -360,
-        -280
-      ],
-      "id": "e3a613e0-cb85-4b0b-9ba6-0ae3a2f95622",
-      "name": "Create spreadsheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "VGSfBsuQBvu2iTVJ",
-          "name": "Google Sheets account"
-        }
-      },
-      "disabled": true
+      "name": "항목 분리"
     },
     {
       "parameters": {
@@ -79,11 +77,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        260,
-        160
+        300,
+        320
       ],
       "id": "d380c173-7ca2-43ae-9842-a31264a6be55",
-      "name": "If"
+      "name": "응급실 실시간 가용병상정보 조회인 경우만"
     },
     {
       "parameters": {
@@ -93,7 +91,7 @@
           "parameters": [
             {
               "name": "STAGE1",
-              "value": "={{ $('Code').item.json.stage1 }}"
+              "value": "={{ $('초기 설정값 정의').item.json.stage1 }}"
             },
             {
               "name": "STAGE2",
@@ -119,10 +117,10 @@
       "typeVersion": 4.2,
       "position": [
         520,
-        240
+        320
       ],
       "id": "910266d8-03c8-480b-b224-406ac7966137",
-      "name": "HTTP Request"
+      "name": "OpenAPI 데이터 요청"
     },
     {
       "parameters": {
@@ -142,10 +140,39 @@
       "typeVersion": 3.4,
       "position": [
         740,
-        240
+        320
       ],
       "id": "db650064-6dda-4634-9e74-697c5908163c",
-      "name": "Edit Fields"
+      "name": "데이터 선택"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "item",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        960,
+        320
+      ],
+      "id": "aff7dc75-ed8a-4d9f-aba2-01494d4eba52",
+      "name": "아이템 분리"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "python",
+        "pythonCode": "mapping = [\n  {\n    \"resultCode\": \"결과코드\",\n    \"resultMag\": \"결과메시지\",\n    \"rnum\": \"일련번호\",\n    \"hpid\": \"기관코드\",\n    \"phpid\": \"기관코드\",\n    \"hvidate\": \"입력일시\",\n    \"hvec\": \"일반\",\n    \"hvoc\": \"기타 수술실\",\n    \"hvcc\": \"중환자실 신경과\",\n    \"hvncc\": \"중환자실 신생아\",\n    \"hvccc\": \"중환자실 흉부외과\",\n    \"hvicc\": \"중환자실 일반\",\n    \"hvgc\": \"입원실 일반\",\n    \"hvdnm\": \"당직의\",\n    \"hvctayn\": \"CT (가용/가부)\",\n    \"hvmriayn\": \"MRI (가용/가부)\",\n    \"hvangioayn\": \"혈관촬영기가용 (가/부)\",\n    \"hvventiayn\": \"인공호흡기가용 (가/부)\",\n    \"hvventisoayn\": \"인공호흡기 조산아가용 (가/부)\",\n    \"hvincuayn\": \"인큐베이터가용 (가/부)\",\n    \"hvcrrtayn\": \"CRRT (가용/가부)\",\n    \"hvecmoayn\": \"ECMO (가용/가부)\",\n    \"hvoxyayn\": \"고압산소치료기가용 (가/부)\",\n    \"hvhypoayn\": \"중심체온조절유도기 (가/부)\",\n    \"hvamyn\": \"구급차가용여부\",\n    \"hv1\": \"응급실 당직의 직통연락처\",\n    \"hv2\": \"중환자실 내과\",\n    \"hv3\": \"중환자실 외과\",\n    \"hv4\": \"외과입원실 (정형외과)\",\n    \"hv5\": \"신경과입원실\",\n    \"hv6\": \"중환자실 신경외과\",\n    \"hv7\": \"약물중환자\",\n    \"hv8\": \"중환자실 화상\",\n    \"hv9\": \"중환자실 외상\",\n    \"hv10\": \"VENTI (소아)\",\n    \"hv11\": \"인큐베이터 (보육기)\",\n    \"hv12\": \"소아당직의 직통연락처\",\n    \"hv13\": \"격리진료구역 음압격리병상\",\n    \"hv14\": \"격리진료구역 일반격리병상\",\n    \"hv15\": \"소아음압격리\",\n    \"hv16\": \"소아일반격리\",\n    \"hv17\": \"응급전용 중환자실 음압격리\",\n    \"hv18\": \"응급전용 중환자실 일반격리\",\n    \"hv19\": \"응급전용 입원실 음압격리\",\n    \"hv21\": \"응급전용 입원실 일반격리\",\n    \"hv22\": \"감염병 전담병상 중환자실\",\n    \"hv23\": \"감염병 전담병상 중환자실 내 음압격리병상\",\n    \"hv24\": \"감염 중증 병상\",\n    \"hv25\": \"감염 준 중증 병상\",\n    \"hv26\": \"감염 중등증 병상\",\n    \"hv27\": \"코호트 격리\",\n    \"hv28\": \"소아\",\n    \"hv29\": \"응급실 음압 격리 병상\",\n    \"hv30\": \"응급실 일반 격리 병상\",\n    \"hv31\": \"응급전용 중환자실\",\n    \"hv32\": \"중환자실 소아\",\n    \"hv33\": \"응급전용 소아중환자실\",\n    \"hv34\": \"중환자실 심장내과\",\n    \"hv35\": \"중환자실 음압격리\",\n    \"hv36\": \"응급전용 입원실\",\n    \"hv37\": \"응급전용 소아입원실\",\n    \"hv38\": \"입원실 외상전용\",\n    \"hv39\": \"기타 외상전용 수술실\",\n    \"hv40\": \"입원실 정신과 폐쇄병동\",\n    \"hv41\": \"입원실 음압격리\",\n    \"hv42\": \"기타 분만실\",\n    \"hv43\": \"기타 화상전용처치실\",\n    \"hv60\": \"외상소생실\",\n    \"hv61\": \"외상환자진료구역\",\n    \"dutyname\": \"기관명\",\n    \"dutyTel3\": \"응급실전화\",\n    \"HVS01\": \"일반 기준\",\n    \"HVS02\": \"소아 기준\",\n    \"HVS03\": \"응급실 음압 격리 병상 기준\",\n    \"HVS04\": \"응급실 일반 격리 병상 기준\",\n    \"HVS05\": \"응급전용 중환자실 기준\",\n    \"HVS06\": \"중환자실 내과 기준\",\n    \"HVS07\": \"중환자실 외과 기준\",\n    \"HVS08\": \"중환자실 신생아 기준\",\n    \"HVS09\": \"중환자실 소아 기준\",\n    \"HVS10\": \"응급전용 소아중환자실 기준\",\n    \"HVS11\": \"중환자실 신경과 기준\",\n    \"HVS12\": \"중환자실 신경외과 기준\",\n    \"HVS13\": \"중환자실 화상 기준\",\n    \"HVS14\": \"중환자실 외상 기준\",\n    \"HVS15\": \"중환자실 심장내과 기준\",\n    \"HVS16\": \"중환자실 흉부외과 기준\",\n    \"HVS17\": \"중환자실 일반 기준\",\n    \"HVS18\": \"중환자실 음압격리 기준\",\n    \"HVS19\": \"응급전용 입원실 기준\",\n    \"HVS20\": \"응급전용 소아입원실 기준\",\n    \"HVS21\": \"입원실 외상전용 기준\",\n    \"HVS22\": \"기타 수술실 기준\",\n    \"HVS23\": \"기타 외상전용 수술실 기준\",\n    \"HVS24\": \"입원실 정신과 폐쇄병동 기준\",\n    \"HVS25\": \"입원실 음압격리 기준\",\n    \"HVS26\": \"기타 분만실 기준\",\n    \"HVS27\": \"CT 기준\",\n    \"HVS28\": \"MRI 기준\",\n    \"HVS29\": \"혈관촬영기 기준\",\n    \"HVS30\": \"인공호흡기 일반 기준\",\n    \"HVS31\": \"인공호흡기 조산아 기준\",\n    \"HVS32\": \"인큐베이터 기준\",\n    \"HVS33\": \"CRRT 기준\",\n    \"HVS34\": \"ECMO 기준\",\n    \"HVS35\": \"중심체온조절유도기 기준\",\n    \"HVS36\": \"기타 화상전용처치실 기준\",\n    \"HVS37\": \"고압산소치료기 기준\",\n    \"HVS38\": \"입원실 일반 기준\",\n    \"HVS46\": \"격리진료구역 음압격리 기준\",\n    \"HVS47\": \"격리진료구역 일반격리 기준\",\n    \"HVS48\": \"소아음압격리 기준\",\n    \"HVS49\": \"소아일반격리 기준\",\n    \"HVS50\": \"응급전용 중환자실 음압격리 기준\",\n    \"HVS51\": \"응급전용 중환자실 일반격리 기준\",\n    \"HVS52\": \"응급전용 입원실 음압격리 기준\",\n    \"HVS53\": \"응급전용 입원실 일반격리 기준\",\n    \"HVS54\": \"감염병 전담병상 중환자실 기준\",\n    \"HVS55\": \"감염병 전담병상 중환자실 내 음압격리병상 기준\",\n    \"HVS56\": \"감염 중증 병상 기준\",\n    \"HVS57\": \"감염 준 중증 병상 기준\",\n    \"HVS58\": \"감염 중등증 병상 기준\",\n    \"HVS59\": \"코호트 격리 기준\",\n    \"HVS60\": \"외상소생실 기준\",\n    \"HVS61\": \"외상환자진료구역 기준\"\n  }\n]\n\nnew_mapping = {k.lower() : v for k, v in mapping[0].items()}\n\nfinal = {}\n\nfor key, value in item.json.items():\n\n    final[new_mapping[key.lower()]] = value\nreturn final"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        320
+      ],
+      "id": "871cf4eb-8495-42f5-9124-74756acce200",
+      "name": "영문 필드 -> 한글 필드"
     },
     {
       "parameters": {
@@ -1279,10 +1306,10 @@
       "typeVersion": 4.6,
       "position": [
         1400,
-        240
+        320
       ],
       "id": "2290d89e-ef7e-40a9-ad66-40691d88a213",
-      "name": "Append row in sheet",
+      "name": "구글 시트 행 추가",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "VGSfBsuQBvu2iTVJ",
@@ -1292,55 +1319,34 @@
     },
     {
       "parameters": {
-        "fieldToSplitOut": "item",
-        "options": {}
+        "content": "## [응급실 실시간 가용병상정보 스크래퍼]\n- 공공데이터 포털에서 제공하는 **'응급실 실시간 가용병상정보'**를 자동으로 수집하여 Google Sheets에 기록하는 자동화 시스템입니다. \n- 서울시의 응급 의료 기관에 가용 병상 정보를 주기적(20분 단위)으로 업데이트하고, 이를 Tableau와 같은 시각화 도구에서 활용할 수 있도록 설계되었습니다.\n\n### **주요 기능 및 작동 원리**\n\n1.  **자동 실행 스케줄 설정**: \n    * 20분마다 워크플로우를 자동으로 실행하여 최신 데이터를 가져옵니다.\n2.  **API 호출 설정**:\n    * `Code` 노드에서 데이터 수집에 필요한 기본 설정값과 API 목록을 정의합니다.\n    * `If` 노드를 사용하여 정의된 여러 API 목록 중 **'응급실 실시간 가용병상정보 조회'** API만 선택적으로 호출합니다.\n    * `HTTP Request` 노드를 통해 실제 API에 데이터를 요청하며, 한 번에 최대 10,000개의 데이터를 가져오도록 설정되어 있습니다.\n\n3.  **데이터 전처리 및 가공**:\n    * `Edit Fields` 및 `Split Out1` 노드를 통해 API 응답 데이터(`JSON` 형식)를 Google Sheets에 한 행씩 기록할 수 있는 형태로 변환합니다.\n    * `Code1` 노드에서는 API 응답의 영문 필드명(예: `hpid`)을 사람이 이해하기 쉬운 한글 컬럼명(예: `기관코드`)으로 매핑하는 작업을 수행합니다.\n\n4.  **Google Sheets에 데이터 저장**:\n    * `Append row in sheet` 노드를 사용하여 최종 가공된 데이터를 지정된 Google Sheets 문서의 **'실시간 데이터'** 시트에 자동으로 추가합니다.\n    * **메모**: 다수 건의 데이터를 누적해서 추가하므로, 장기적으로 데이터 양이 많아지면 시트 성능에 영향 및 Tableau 연동에 영향을 줄 수 있습니다.",
+        "height": 720,
+        "width": 2020,
+        "color": 5
       },
-      "type": "n8n-nodes-base.splitOut",
+      "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        960,
-        240
+        -420,
+        -240
       ],
-      "id": "aff7dc75-ed8a-4d9f-aba2-01494d4eba52",
-      "name": "Split Out1"
+      "id": "62d8e975-b7da-483f-aa1c-01c111813115",
+      "name": "Sticky Note"
     },
     {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "minutes",
-              "minutesInterval": 30
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
       "position": [
-        -360,
-        240
+        1000,
+        120
       ],
-      "id": "e6b9bbbf-12ca-4339-a8ab-3936e83a6118",
-      "name": "Schedule Trigger"
+      "id": "d1bee080-7d7f-4cd0-8651-1fdd66edd3bd",
+      "name": "클릭 시 실행"
     },
     {
       "parameters": {
-        "mode": "runOnceForEachItem",
-        "language": "python",
-        "pythonCode": "mapping = [\n  {\n    \"resultCode\": \"결과코드\",\n    \"resultMag\": \"결과메시지\",\n    \"rnum\": \"일련번호\",\n    \"hpid\": \"기관코드\",\n    \"phpid\": \"기관코드\",\n    \"hvidate\": \"입력일시\",\n    \"hvec\": \"일반\",\n    \"hvoc\": \"기타 수술실\",\n    \"hvcc\": \"중환자실 신경과\",\n    \"hvncc\": \"중환자실 신생아\",\n    \"hvccc\": \"중환자실 흉부외과\",\n    \"hvicc\": \"중환자실 일반\",\n    \"hvgc\": \"입원실 일반\",\n    \"hvdnm\": \"당직의\",\n    \"hvctayn\": \"CT (가용/가부)\",\n    \"hvmriayn\": \"MRI (가용/가부)\",\n    \"hvangioayn\": \"혈관촬영기가용 (가/부)\",\n    \"hvventiayn\": \"인공호흡기가용 (가/부)\",\n    \"hvventisoayn\": \"인공호흡기 조산아가용 (가/부)\",\n    \"hvincuayn\": \"인큐베이터가용 (가/부)\",\n    \"hvcrrtayn\": \"CRRT (가용/가부)\",\n    \"hvecmoayn\": \"ECMO (가용/가부)\",\n    \"hvoxyayn\": \"고압산소치료기가용 (가/부)\",\n    \"hvhypoayn\": \"중심체온조절유도기 (가/부)\",\n    \"hvamyn\": \"구급차가용여부\",\n    \"hv1\": \"응급실 당직의 직통연락처\",\n    \"hv2\": \"중환자실 내과\",\n    \"hv3\": \"중환자실 외과\",\n    \"hv4\": \"외과입원실 (정형외과)\",\n    \"hv5\": \"신경과입원실\",\n    \"hv6\": \"중환자실 신경외과\",\n    \"hv7\": \"약물중환자\",\n    \"hv8\": \"중환자실 화상\",\n    \"hv9\": \"중환자실 외상\",\n    \"hv10\": \"VENTI (소아)\",\n    \"hv11\": \"인큐베이터 (보육기)\",\n    \"hv12\": \"소아당직의 직통연락처\",\n    \"hv13\": \"격리진료구역 음압격리병상\",\n    \"hv14\": \"격리진료구역 일반격리병상\",\n    \"hv15\": \"소아음압격리\",\n    \"hv16\": \"소아일반격리\",\n    \"hv17\": \"응급전용 중환자실 음압격리\",\n    \"hv18\": \"응급전용 중환자실 일반격리\",\n    \"hv19\": \"응급전용 입원실 음압격리\",\n    \"hv21\": \"응급전용 입원실 일반격리\",\n    \"hv22\": \"감염병 전담병상 중환자실\",\n    \"hv23\": \"감염병 전담병상 중환자실 내 음압격리병상\",\n    \"hv24\": \"감염 중증 병상\",\n    \"hv25\": \"감염 준 중증 병상\",\n    \"hv26\": \"감염 중등증 병상\",\n    \"hv27\": \"코호트 격리\",\n    \"hv28\": \"소아\",\n    \"hv29\": \"응급실 음압 격리 병상\",\n    \"hv30\": \"응급실 일반 격리 병상\",\n    \"hv31\": \"응급전용 중환자실\",\n    \"hv32\": \"중환자실 소아\",\n    \"hv33\": \"응급전용 소아중환자실\",\n    \"hv34\": \"중환자실 심장내과\",\n    \"hv35\": \"중환자실 음압격리\",\n    \"hv36\": \"응급전용 입원실\",\n    \"hv37\": \"응급전용 소아입원실\",\n    \"hv38\": \"입원실 외상전용\",\n    \"hv39\": \"기타 외상전용 수술실\",\n    \"hv40\": \"입원실 정신과 폐쇄병동\",\n    \"hv41\": \"입원실 음압격리\",\n    \"hv42\": \"기타 분만실\",\n    \"hv43\": \"기타 화상전용처치실\",\n    \"hv60\": \"외상소생실\",\n    \"hv61\": \"외상환자진료구역\",\n    \"dutyname\": \"기관명\",\n    \"dutyTel3\": \"응급실전화\",\n    \"HVS01\": \"일반 기준\",\n    \"HVS02\": \"소아 기준\",\n    \"HVS03\": \"응급실 음압 격리 병상 기준\",\n    \"HVS04\": \"응급실 일반 격리 병상 기준\",\n    \"HVS05\": \"응급전용 중환자실 기준\",\n    \"HVS06\": \"중환자실 내과 기준\",\n    \"HVS07\": \"중환자실 외과 기준\",\n    \"HVS08\": \"중환자실 신생아 기준\",\n    \"HVS09\": \"중환자실 소아 기준\",\n    \"HVS10\": \"응급전용 소아중환자실 기준\",\n    \"HVS11\": \"중환자실 신경과 기준\",\n    \"HVS12\": \"중환자실 신경외과 기준\",\n    \"HVS13\": \"중환자실 화상 기준\",\n    \"HVS14\": \"중환자실 외상 기준\",\n    \"HVS15\": \"중환자실 심장내과 기준\",\n    \"HVS16\": \"중환자실 흉부외과 기준\",\n    \"HVS17\": \"중환자실 일반 기준\",\n    \"HVS18\": \"중환자실 음압격리 기준\",\n    \"HVS19\": \"응급전용 입원실 기준\",\n    \"HVS20\": \"응급전용 소아입원실 기준\",\n    \"HVS21\": \"입원실 외상전용 기준\",\n    \"HVS22\": \"기타 수술실 기준\",\n    \"HVS23\": \"기타 외상전용 수술실 기준\",\n    \"HVS24\": \"입원실 정신과 폐쇄병동 기준\",\n    \"HVS25\": \"입원실 음압격리 기준\",\n    \"HVS26\": \"기타 분만실 기준\",\n    \"HVS27\": \"CT 기준\",\n    \"HVS28\": \"MRI 기준\",\n    \"HVS29\": \"혈관촬영기 기준\",\n    \"HVS30\": \"인공호흡기 일반 기준\",\n    \"HVS31\": \"인공호흡기 조산아 기준\",\n    \"HVS32\": \"인큐베이터 기준\",\n    \"HVS33\": \"CRRT 기준\",\n    \"HVS34\": \"ECMO 기준\",\n    \"HVS35\": \"중심체온조절유도기 기준\",\n    \"HVS36\": \"기타 화상전용처치실 기준\",\n    \"HVS37\": \"고압산소치료기 기준\",\n    \"HVS38\": \"입원실 일반 기준\",\n    \"HVS46\": \"격리진료구역 음압격리 기준\",\n    \"HVS47\": \"격리진료구역 일반격리 기준\",\n    \"HVS48\": \"소아음압격리 기준\",\n    \"HVS49\": \"소아일반격리 기준\",\n    \"HVS50\": \"응급전용 중환자실 음압격리 기준\",\n    \"HVS51\": \"응급전용 중환자실 일반격리 기준\",\n    \"HVS52\": \"응급전용 입원실 음압격리 기준\",\n    \"HVS53\": \"응급전용 입원실 일반격리 기준\",\n    \"HVS54\": \"감염병 전담병상 중환자실 기준\",\n    \"HVS55\": \"감염병 전담병상 중환자실 내 음압격리병상 기준\",\n    \"HVS56\": \"감염 중증 병상 기준\",\n    \"HVS57\": \"감염 준 중증 병상 기준\",\n    \"HVS58\": \"감염 중등증 병상 기준\",\n    \"HVS59\": \"코호트 격리 기준\",\n    \"HVS60\": \"외상소생실 기준\",\n    \"HVS61\": \"외상환자진료구역 기준\"\n  }\n]\n\nnew_mapping = {k.lower() : v for k, v in mapping[0].items()}\n\nfinal = {}\n\nfor key, value in item.json.items():\n\n    final[new_mapping[key.lower()]] = value\nreturn final"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1180,
-        240
-      ],
-      "id": "871cf4eb-8495-42f5-9124-74756acce200",
-      "name": "Code1"
-    },
-    {
-      "parameters": {
+        "operation": "delete",
         "documentId": {
           "__rl": true,
           "value": "1AKQ_17UtJGisnw9jpGeD5URJXm1pF_cdBfMWZto2WE0",
@@ -1350,150 +1356,174 @@
         },
         "sheetName": {
           "__rl": true,
-          "value": 1269701116,
+          "value": 1166866116,
           "mode": "list",
-          "cachedResultName": "컬럼 정보",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AKQ_17UtJGisnw9jpGeD5URJXm1pF_cdBfMWZto2WE0/edit#gid=1269701116"
+          "cachedResultName": "실시간 데이터",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AKQ_17UtJGisnw9jpGeD5URJXm1pF_cdBfMWZto2WE0/edit#gid=1166866116"
         },
-        "options": {}
+        "numberToDelete": 2000
       },
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        -360,
-        -20
+        1220,
+        20
       ],
-      "id": "7fb6d46a-0acd-452a-9539-d4ebd44a5c07",
-      "name": "Get row(s) in sheet",
-      "executeOnce": true,
+      "id": "30146458-ef13-46c3-b324-33e2c550a257",
+      "name": "응급실 실시간 가용병상정보 (2000건 삭제)",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "VGSfBsuQBvu2iTVJ",
           "name": "Google Sheets account"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
-        "language": "python",
-        "pythonCode": "final = {}\n\nfor item in _input.all():\n  final[item.json['항목명 영문']] = item.json['항목명 국문']\n  \nreturn final"
+        "content": "## [응급실 실시간 가용병상정보 행 삭제]\n- Google Sheets에 저장된 응급실 실시간 가용병상 정보 데이터 중 상단 2000건 데이터 삭제\n- 2주마다 일요일 오후 3시에 실행 또는 매뉴얼 실행 가능",
+        "height": 500,
+        "width": 600
       },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
-        -140,
-        -20
+        920,
+        -220
       ],
-      "id": "312deaa0-0b2b-492d-acfa-21cf0e2bda41",
-      "name": "Code2",
-      "disabled": true
+      "id": "92c3f29f-e792-4ac4-b21a-27e638f83c56",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1000,
+        -80
+      ],
+      "id": "5770dc90-bdf0-4813-8b97-f8dc83deb96a",
+      "name": "1주마다 일요일 오후 3시 실행"
     }
   ],
   "pinData": {},
   "connections": {
-    "Code": {
+    "20분마다 실행": {
       "main": [
         [
           {
-            "node": "Split Out",
+            "node": "초기 설정값 정의",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Split Out": {
+    "초기 설정값 정의": {
       "main": [
         [
           {
-            "node": "If",
+            "node": "항목 분리",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If": {
+    "항목 분리": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "응급실 실시간 가용병상정보 조회인 경우만",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "HTTP Request": {
+    "응급실 실시간 가용병상정보 조회인 경우만": {
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "OpenAPI 데이터 요청",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Edit Fields": {
+    "OpenAPI 데이터 요청": {
       "main": [
         [
           {
-            "node": "Split Out1",
+            "node": "데이터 선택",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Split Out1": {
+    "데이터 선택": {
       "main": [
         [
           {
-            "node": "Code1",
+            "node": "아이템 분리",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Schedule Trigger": {
+    "아이템 분리": {
       "main": [
         [
           {
-            "node": "Code",
+            "node": "영문 필드 -> 한글 필드",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code1": {
+    "영문 필드 -> 한글 필드": {
       "main": [
         [
           {
-            "node": "Append row in sheet",
+            "node": "구글 시트 행 추가",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Get row(s) in sheet": {
+    "클릭 시 실행": {
       "main": [
         [
           {
-            "node": "Code2",
+            "node": "응급실 실시간 가용병상정보 (2000건 삭제)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code2": {
+    "1주마다 일요일 오후 3시 실행": {
       "main": [
-        []
+        [
+          {
+            "node": "응급실 실시간 가용병상정보 (2000건 삭제)",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -1501,7 +1531,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9ed42e26-c36a-4e5a-ba87-3528dfe04bb0",
+  "versionId": "cc5ae8dd-c2a9-4066-9357-2bbcb81a8ee8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"

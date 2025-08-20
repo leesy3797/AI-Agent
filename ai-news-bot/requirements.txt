@@ -13,7 +13,6 @@ colorama==0.4.6
 dataclasses-json==0.6.7
 filetype==1.2.0
 frozenlist==1.7.0
-google-ai-generativelanguage==0.6.18
 google-api-core==2.25.1
 google-api-python-client==2.172.0
 google-auth==2.40.3
@@ -34,7 +33,7 @@ jsonpointer==3.0.0
 langchain==0.3.25
 langchain-community==0.3.25
 langchain-core==0.3.65
-langchain-google-genai==2.1.5
+langchain-google-genai
 langchain-text-splitters==0.3.8
 langgraph==0.4.8
 langgraph-checkpoint==2.1.0
